@@ -2,7 +2,9 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:movies_app/blocs/genres/genres_bloc.dart';
 import 'package:movies_app/blocs/movies/all.dart';
+import 'package:movies_app/repositories/genres_repository.dart';
 import 'package:movies_app/repositories/movies_repository.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,8 +46,8 @@ void main() {
                 storageRepository: storageRepository,
               ),
             ),
-            RepositoryProvider<UsersRepository>(
-              builder: (context) => UsersRepository(
+            RepositoryProvider<GenresRepository>(
+              builder: (context) => GenresRepository(
                 apiClient: apiClient,
                 storageRepository: storageRepository,
               ),
@@ -59,16 +61,10 @@ void main() {
                       RepositoryProvider.of<MoviesRepository>(context),
                 ),
               ),
-              BlocProvider<AuthenticationBloc>(
-                builder: (context) => AuthenticationBloc(
-                  usersRepository:
-                      RepositoryProvider.of<UsersRepository>(context),
-                ),
-              ),
-              BlocProvider<UsersBloc>(
-                builder: (context) => UsersBloc(
-                  usersRepository:
-                      RepositoryProvider.of<UsersRepository>(context),
+              BlocProvider<GenresBloc>(
+                builder: (context) => GenresBloc(
+                  genresRepository:
+                      RepositoryProvider.of<GenresRepository>(context),
                 ),
               ),
             ],

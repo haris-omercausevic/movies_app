@@ -51,7 +51,7 @@ class Application extends StatelessWidget {
             return Loader();
           }
 
-          return MoviesPage();
+          return HomePage();
         },
       ),
       title: AppSettings.name,
@@ -66,8 +66,8 @@ class Application extends StatelessWidget {
     switch (settings.name) {
       case HomePage.routeName:
         return MaterialPageRoute(builder: (_) => HomePage(), settings: settings);
-      case RegisterPage.routeName:
-        return MaterialPageRoute(builder: (_) => RegisterPage(), settings: settings);
+      case MoviesPage.routeName:
+        return MaterialPageRoute(builder: (_) => MoviesPage(), settings: settings);
     }
 
     return null;

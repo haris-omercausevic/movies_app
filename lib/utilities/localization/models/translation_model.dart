@@ -34,6 +34,9 @@ class TranslationModel {
   final String inbox;
   final String outbox;
 
+  final String loadPopularMovies;
+  final String loadComedyMovies;
+
   const TranslationModel({
     @required this.home,
     @required this.username,
@@ -67,6 +70,9 @@ class TranslationModel {
     @required this.close,
     @required this.inbox,
     @required this.outbox,
+
+    @required this.loadPopularMovies,
+    @required this.loadComedyMovies,
   })  : assert(home != null),
         assert(username != null),
         assert(password != null),
@@ -98,5 +104,8 @@ class TranslationModel {
         assert(close != null),
         assert(selectLocation != null),
         assert(inbox != null),
-        assert(outbox != null);
+        assert(outbox != null),
+        
+        assert(loadPopularMovies != null),
+        assert(loadComedyMovies != null);
 }

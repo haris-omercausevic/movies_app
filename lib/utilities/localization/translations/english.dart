@@ -33,4 +33,7 @@ const TranslationModel translationEnglish = TranslationModel(
   close: 'Close',
   inbox: 'Inbox',
   outbox: 'Outbox',
+
+  loadComedyMovies: "Show comedy movies",
+  loadPopularMovies: "Show popular movies"
 );

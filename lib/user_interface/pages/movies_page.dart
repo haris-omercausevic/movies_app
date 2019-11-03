@@ -8,6 +8,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MoviesPage extends StatefulWidget {
   MoviesPage({Key key}) : super(key: key);
+  static const routeName = "/MoviesPage";
 
   @override
   State<StatefulWidget> createState() => _MoviesPageState();
