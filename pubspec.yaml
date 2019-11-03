@@ -1,0 +1,40 @@
+name: movies_app
+version: 1.0.0+1
+description: A social network mobile application for sharing the atmosphere and experiences from clubs, cafes and other catering facilities
+
+environment:
+  sdk: ">=2.1.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  #fluttrace:
+   # git: https://github.com/grandpa-guru/fluttrace.git
+
+  dio:
+  http:
+  meta:
+  intl:
+  pedantic:
+  flutter_bloc:
+  flare_flutter:
+  pull_to_refresh:
+  pretty_dio_logger:
+  shared_preferences:
+  flutter_launcher_icons:
+  flutter_facebook_login:
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/flares/loader.flr
+    - assets/photos/logo.png
+    - assets/photos/placeholders/
+    - assets/photos/placeholders/user_profile_placeholder.png
+
+flutter_icons:
+  ios: true
+  android: true
+  image_path: "assets/icons/launcher_icon.png" 
