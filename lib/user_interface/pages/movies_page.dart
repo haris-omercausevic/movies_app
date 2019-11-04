@@ -1,5 +1,6 @@
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/models/entities/movie.dart';
+import 'package:movies_app/models/entities/movie_item.dart';
 import 'package:movies_app/repositories/movies_repository.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
@@ -19,9 +20,6 @@ class _MoviesPageState extends State<MoviesPage> {
   @override
   void didChangeDependencies() {
     moviesBloc = BlocProvider.of<MoviesBloc>(context);
-    //moviesBloc.add(LoadMainPage());
-    //moviesBloc.add(LoadMainPage());
-
     super.didChangeDependencies();
   }
 
@@ -35,54 +33,56 @@ class _MoviesPageState extends State<MoviesPage> {
             builder: (BuildContext context, MoviesState state) {
               if (state is Loading) {
                 return Loader();
-              } else if (state is LoadedMainPage) {
-                return Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      RaisedButton(
-                        onPressed: () => moviesBloc.add(LoadMovies()),
-                        child: Text(
-                          "Load Popular Movies",
-                          style: TextStyle(fontSize: 28),
-                        ),
-                      ),
-                      RaisedButton(
-                        onPressed: () =>
-                            moviesBloc.add(LoadMoviesByGenre(genreId: 35)),
-                        child: Text(
-                          "Load Comedy Movies",
-                          style: TextStyle(fontSize: 28),
-                        ),
-                      ),
-                      // FutureBuilder<List<GenresModel>>(
-                      //     future: moviesBloc.moviesRepository.getGenresList(),
-                      //     builder: (BuildContext context,
-                      //         AsyncSnapshot<List<GenresModel>> snapshot) {
-                      //       if (!snapshot.hasData)
-                      //         return CircularProgressIndicator();
-                      //       return DropdownButton<GenresModel>(
-                      //         items: snapshot.data
-                      //             .map((genre) => DropdownMenuItem<GenresModel>(
-                      //                   child: Text(genre.name),
-                      //                   value: genre,
-                      //                 ))
-                      //             .toList(),
-                      //         onChanged: (GenresModel value) {
-                      //           setState(() {
-                      //             _currentGenre = value;
-                      //           });
-                      //         },
-                      //         isExpanded: false,
-                      //         //value: _currentUser,
-                      //         hint: Text('Select Genre'),
-                      //       );
-                      //     }),
-                    ],
-                  ),
-                );
-              } else if (state is LoadedMovies) {
+              }
+              // else if (state is LoadedMainPage) {
+              //   return Center(
+              //     child: Column(
+              //       crossAxisAlignment: CrossAxisAlignment.center,
+              //       mainAxisAlignment: MainAxisAlignment.center,
+              //       children: <Widget>[
+              //         RaisedButton(
+              //           onPressed: () => moviesBloc.add(LoadMovies()),
+              //           child: Text(
+              //             "Load Popular Movies",
+              //             style: TextStyle(fontSize: 28),
+              //           ),
+              //         ),
+              //         RaisedButton(
+              //           onPressed: () =>
+              //               moviesBloc.add(LoadMoviesByGenre(genreId: 35)),
+              //           child: Text(
+              //             "Load Comedy Movies",
+              //             style: TextStyle(fontSize: 28),
+              //           ),
+              //         ),
+              // FutureBuilder<List<GenresModel>>(
+              //     future: moviesBloc.moviesRepository.getGenresList(),
+              //     builder: (BuildContext context,
+              //         AsyncSnapshot<List<GenresModel>> snapshot) {
+              //       if (!snapshot.hasData)
+              //         return CircularProgressIndicator();
+              //       return DropdownButton<GenresModel>(
+              //         items: snapshot.data
+              //             .map((genre) => DropdownMenuItem<GenresModel>(
+              //                   child: Text(genre.name),
+              //                   value: genre,
+              //                 ))
+              //             .toList(),
+              //         onChanged: (GenresModel value) {
+              //           setState(() {
+              //             _currentGenre = value;
+              //           });
+              //         },
+              //         isExpanded: false,
+              //         //value: _currentUser,
+              //         hint: Text('Select Genre'),
+              //       );
+              //     }),
+              // ],
+              // ),
+              // );
+              // }
+              else if (state is LoadedMovies) {
                 return buildColumnWithData(state.movies);
                 // return Container(
                 //   padding: EdgeInsets.all(10.0),
@@ -150,13 +150,21 @@ class _MoviesPageState extends State<MoviesPage> {
               movies.results[index].title,
               style: TextStyle(color: Colors.white),
             ),
-            child: Image.network(
-              "https://image.tmdb.org/t/p/w185${movies.results[index].poster_path}", //ovaj request hendlat negdje drugo
-              fit: BoxFit.cover,
+            child: InkResponse(
+              enableFeedback: true,
+              child: Image.network(
+                "https://image.tmdb.org/t/p/w185${movies.results[index].poster_path}", //ovaj request hendlat negdje drugo
+                fit: BoxFit.cover,
+              ),
+              onTap: () => _onTileClicked(movies.results[index]),
             ),
           ),
         );
       },
     );
   }
+}
+
+void _onTileClicked(MovieItem movieItem){
+  print("Tile with title: ${movieItem.title} clicked!");
 }

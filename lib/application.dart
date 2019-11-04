@@ -42,18 +42,18 @@ class Application extends StatelessWidget {
           child: child,
         );
       },
-      home: BlocBuilder<MoviesBloc, MoviesState>(
-        builder: (context, state) {
-          //TODO: Remove for app with authentication
-          //return HomePage();
+      home: HomePage(),
+      // home: BlocBuilder<MoviesBloc, MoviesState>(
+      //   builder: (context, state) {
+      //     //TODO: Remove for app with authentication
+      //     //return HomePage();
 
-          if (state is Loading) {
-            return Loader();
-          }
+      //     if (state is Loading) {
+      //       return Loader();
+      //     }
 
-          return HomePage();
-        },
-      ),
+     //     return HomePage();
+      //  },),
       title: AppSettings.name,
       onGenerateRoute: this._onGenerateRoute,
       localeResolutionCallback: Localizer.getSupportedLocale,
