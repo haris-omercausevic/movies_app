@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:movies_app/blocs/genres/genres_bloc.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/config/app_settings.dart';
+import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/models/entities/movie_item.dart';
-import 'package:movies_app/user_interface/common/app_theme.dart';
-import 'package:movies_app/user_interface/pages/movies_page.dart';
+import 'package:movies_app/user_interface/common/all.dart';
+import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
+
+import 'movies_details_page.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/";
@@ -25,16 +27,17 @@ class _HomePageState extends State<HomePage> {
   MediaQueryData _mediaQuery;
 
   MoviesBloc _moviesBloc;
-
-  //GenresBloc _genresBloc;
-  
-
   _SearchAppBarDelegate _searchDelegate;
 
-  @override
-  void initState() {
-    _searchDelegate = _SearchAppBarDelegate(null);
-    super.initState();
+  List<Widget> _children = [
+    MoviesPage(),
+    MoviesPage(),
+    MoviesPage(),
+  ];
+  void _onTabTapped(int index) {
+      setState(() {
+        selectedIndex = index;
+      });
   }
 
   @override
@@ -43,74 +46,95 @@ class _HomePageState extends State<HomePage> {
     _theme = Theme.of(context);
     _navigator = Navigator.of(context);
     _mediaQuery = MediaQuery.of(context);
-
     _moviesBloc = BlocProvider.of<MoviesBloc>(context);
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 3,
-      child: Scaffold(
-        appBar: homeAppBar(),
-        bottomNavigationBar: bottomNavBar(),
-        body: Container(
-          color: _theme.backgroundColor,
-          height: double.infinity,
-          child: Center(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                RaisedButton(
-                  onPressed: () {
-                    _moviesBloc.add(LoadMovies());
-                    _navigator.pushNamed(MoviesPage.routeName);
-                  },
-                  child: Text(
-                    _localizer.translation.loadPopularMovies,
-                    style: TextStyle(fontSize: 28),
-                  ),
-                ),
-                RaisedButton(
-                  onPressed: () {
-                    _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
-                    _navigator.pushNamed(MoviesPage.routeName);
-                  },
-                  child: Text(
-                    _localizer.translation.loadComedyMovies,
-                    style: TextStyle(fontSize: 28),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+    final double statusBarHeight = _mediaQuery.padding.top / 2;
+    final screenHeightPercent = (_mediaQuery.size.height -
+            _mediaQuery.padding.top -
+            kBottomNavigationBarHeight) /
+        100;
+
+    return Scaffold(
+      appBar: homeAppBar(),
+      bottomNavigationBar: bottomNavBar(),
+      body: _children[selectedIndex]
+      
+      //  BlocBuilder<MoviesBloc, MoviesState>(
+      //     bloc: _moviesBloc,
+      //     builder: (BuildContext context, MoviesState state) {
+      //       if (state is Loading) {
+      //         return Loader();
+      //       } else if (state is LoadedMovies) {
+      //         _searchDelegate = _SearchAppBarDelegate(state.movies.results);
+      //         return buildColumnWithData(state.movies);
+      //       } else if (state is Initial) {
+      //         _moviesBloc.add(LoadMovies());
+      //       }
+
+      //       return ErrorPage();
+      //     })
+          ,
     );
   }
 
-Widget bottomNavBar(){
-  return BottomNavigationBar(
-    currentIndex: selectedIndex,
-    items: [
-      BottomNavigationBarItem(
-        icon: Icon(Icons.first_page),
-        title: Text('Popular'),
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.last_page),
-        title: Text('In theatres'),
-      ),
-      BottomNavigationBarItem(
-        icon: Icon(Icons.first_page),
-        title: Text('Popular'),
-      ),
-      
-    ],
+  Widget buildColumnWithData(MovieModel movies) {
+    return GridView.builder(
+      itemCount: movies.results.length,
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          child: GridTile(
+            footer: Text(
+              movies.results[index].title,
+              style: TextStyle(color: Colors.white),
+            ),
+            child: InkResponse(
+              enableFeedback: true,
+              child: Image.network(
+                movies.results[index].poster_path,
+                fit: BoxFit.cover,
+              ),
+              onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
+                  arguments: movies.results[index]),
+            ),
+          ),
+        );
+      },
     );
-}
+  }
+
+  Widget bottomNavBar() {
+    return BottomNavigationBar(
+      currentIndex: selectedIndex,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.black,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white,
+      selectedFontSize: 8,
+      unselectedFontSize: 8,
+      onTap: _onTabTapped,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Text('Popular'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.rss_feed),
+          title: Text('In theatres'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.new_releases),
+          title: Text('Upcoming'),
+        ),
+      ],
+    );
+  }
+
   Widget homeAppBar() {
     return AppBar(
       actions: <Widget>[
@@ -130,38 +154,34 @@ Widget bottomNavBar(){
         ),
       ],
       title: Text(AppSettings.name),
-      bottom: TabBar(
-        tabs: <Widget>[
-          Tab(
-            icon: Icon(Icons.directions_bike),
-            text: "In theatres",
-            //child: Text("In theatres"),
-          ),
-          Tab(
-            icon: Icon(Icons.directions_car),
-            text: "Popular",
-            //child: Text("Popular"),
-          ),
-          Tab(
-            icon: Icon(Icons.shutter_speed),
-            text: "Incoming",
-            //child: Text("Incoming"),
-          )
-        ],
-      ),
+      // bottom: TabBar(
+      //   tabs: <Widget>[
+      //     Tab(
+      //       icon: Icon(Icons.directions_bike),
+      //       text: "In theatres",
+      //     ),
+      //     Tab(
+      //       icon: Icon(Icons.directions_car),
+      //       text: "Popular",
+      //     ),
+      //     Tab(
+      //       icon: Icon(Icons.shutter_speed),
+      //       text: "Upcoming",
+      //     )
+      //   ],
+      // ),
     );
   }
 }
-
 class _SearchAppBarDelegate extends SearchDelegate<String> {
   final List<MovieItem> _movies;
   //list holds history search words.
-  final List<String> _history;
+  final List<MovieItem> _history;
 
   //initialize delegate with full word list and history words
   _SearchAppBarDelegate(List<MovieItem> movies)
       : _movies = movies,
-        _history = <String>[],
+        _history = <MovieItem>[],
         //pre-populated history of words
         //_history = <String>['apple', 'orange', 'banana', 'watermelon'],
         super();
@@ -234,7 +254,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    final Iterable<String> suggestions = this.query.isEmpty
+    final Iterable<MovieItem> suggestions = this.query.isEmpty
         ? _history
         : _movies.where((word) => word.title.startsWith(query));
 
@@ -242,8 +262,8 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
     return _WordSuggestionList(
         query: this.query,
         suggestions: suggestions.toList(),
-        onSelected: (String suggestion) {
-          this.query = suggestion;
+        onSelected: (MovieItem suggestion) {
+          this.query = suggestion.title;
           this._history.insert(0, suggestion);
           showResults(context);
         });
@@ -253,9 +273,9 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
 class _WordSuggestionList extends StatelessWidget {
   const _WordSuggestionList({this.suggestions, this.query, this.onSelected});
 
-  final List<String> suggestions;
+  final List<MovieItem> suggestions;
   final String query;
-  final ValueChanged<String> onSelected;
+  final ValueChanged<MovieItem> onSelected;
 
   @override
   Widget build(BuildContext context) {
@@ -263,17 +283,17 @@ class _WordSuggestionList extends StatelessWidget {
     return ListView.builder(
       itemCount: suggestions.length,
       itemBuilder: (BuildContext context, int i) {
-        final String suggestion = suggestions[i];
+        final MovieItem suggestion = suggestions[i];
         return ListTile(
           leading: query.isEmpty ? Icon(Icons.history) : Icon(null),
           // Highlight the substring that matched the query.
           title: RichText(
             text: TextSpan(
-              text: suggestion.substring(0, query.length),
+              text: suggestion.title.substring(0, query.length),
               style: textTheme.copyWith(fontWeight: FontWeight.bold),
               children: <TextSpan>[
                 TextSpan(
-                  text: suggestion.substring(query.length),
+                  text: suggestion.title.substring(query.length),
                   style: textTheme,
                 ),
               ],

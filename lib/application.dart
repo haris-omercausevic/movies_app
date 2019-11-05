@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:movies_app/config/all.dart';
@@ -9,7 +8,6 @@ import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/user_interface/pages/movies_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
-import 'blocs/movies/all.dart';
 
 class Application extends StatelessWidget {
   @override
@@ -46,7 +44,6 @@ class Application extends StatelessWidget {
       home: HomePage(),
       // home: BlocBuilder<MoviesBloc, MoviesState>(
       //   builder: (context, state) {
-      //     //TODO: Remove for app with authentication
       //     //return HomePage();
 
       //     if (state is Loading) {

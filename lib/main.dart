@@ -12,9 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:movies_app/config/all.dart';
 import 'package:movies_app/application.dart';
 
-import 'package:movies_app/blocs/users/users_bloc.dart';
-import 'package:movies_app/blocs/authentication/authentication_bloc.dart';
-
 import 'package:movies_app/repositories/all.dart';
 import 'package:movies_app/config/app_settings.dart';
 import 'package:movies_app/utilities/api_client.dart';
