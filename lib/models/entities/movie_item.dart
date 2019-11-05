@@ -1,8 +1,10 @@
+import 'package:movies_app/config/app_settings.dart';
+
 class MovieItem {
   int _vote_count;
   int _id;
   bool _video;
-  var _vote_average;
+  double _vote_average;
   String _title;
   double _popularity;
   String _poster_path;
@@ -14,14 +16,16 @@ class MovieItem {
   String _overview;
   String _release_date;
 
+  final imagePath = AppSettings.imageUrl;
+
   MovieItem(result) {
     _vote_count = result['vote_count'];
     _id = result['id'];
     _video = result['video'];
-    _vote_average = result['vote_average'];
+    _vote_average = result['vote_average'].toDouble();
     _title = result['title'];
     _popularity = result['popularity'];
-    _poster_path = result['poster_path'];
+    _poster_path = imagePath + result['poster_path'];    //image path + poster_path URI
     _original_language = result['original_language'];
     _original_title = result['original_title'];
     for (int i = 0; i < result['genre_ids'].length; i++) {

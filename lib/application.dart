@@ -5,6 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:movies_app/config/all.dart';
 import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/user_interface/common/all.dart';
+import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/user_interface/pages/movies_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
@@ -20,7 +21,7 @@ class Application extends StatelessWidget {
             color: Colors.white,
           ),
         ),
-        primarySwatch: Colors.red,
+        primarySwatch: Colors.blue,
         backgroundColor: Color(0xFF2D2C2C),
         fontFamily: AppSettings.fontFamily,
         scaffoldBackgroundColor: Colors.white,
@@ -68,6 +69,8 @@ class Application extends StatelessWidget {
         return MaterialPageRoute(builder: (_) => HomePage(), settings: settings);
       case MoviesPage.routeName:
         return MaterialPageRoute(builder: (_) => MoviesPage(), settings: settings);
+      case MoviesDetailsPage.routeName:
+        return MaterialPageRoute(builder: (_) => MoviesDetailsPage(movieItem: settings.arguments,), settings: settings);
     }
 
     return null;
