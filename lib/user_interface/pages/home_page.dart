@@ -17,6 +17,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
+
   ThemeData _theme;
   Localizer _localizer;
   AppThemeData _appTheme;
@@ -53,6 +54,7 @@ class _HomePageState extends State<HomePage> {
       length: 3,
       child: Scaffold(
         appBar: homeAppBar(),
+        bottomNavigationBar: bottomNavBar(),
         body: Container(
           color: _theme.backgroundColor,
           height: double.infinity,
@@ -89,6 +91,26 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+Widget bottomNavBar(){
+  return BottomNavigationBar(
+    currentIndex: selectedIndex,
+    items: [
+      BottomNavigationBarItem(
+        icon: Icon(Icons.first_page),
+        title: Text('Popular'),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.last_page),
+        title: Text('In theatres'),
+      ),
+      BottomNavigationBarItem(
+        icon: Icon(Icons.first_page),
+        title: Text('Popular'),
+      ),
+      
+    ],
+    );
+}
   Widget homeAppBar() {
     return AppBar(
       actions: <Widget>[
