@@ -218,18 +218,15 @@ class _MoviesPageState extends State<MoviesPage> {
         tabs: <Widget>[
           Tab(
             icon: Icon(Icons.directions_bike),
-            text: "In theatres",
-            //child: Text("In theatres"),
+            text: "In theatres",            
           ),
           Tab(
             icon: Icon(Icons.directions_car),
-            text: "Popular",
-            //child: Text("Popular"),
+            text: "Popular",            
           ),
           Tab(
             icon: Icon(Icons.shutter_speed),
-            text: "Incoming",
-            //child: Text("Incoming"),
+            text: "Incoming",            
           )
         ],
       ),
