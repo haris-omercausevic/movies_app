@@ -58,9 +58,7 @@ class Application extends StatelessWidget {
     );
   }
 
-  PageRoute _onGenerateRoute(RouteSettings settings) {
-    print(settings.arguments.toString());
-
+  PageRoute _onGenerateRoute(RouteSettings settings) {    
     switch (settings.name) {
       case HomePage.routeName:
         return MaterialPageRoute(builder: (_) => HomePage(), settings: settings);

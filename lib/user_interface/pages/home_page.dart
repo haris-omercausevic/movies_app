@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  int selectedIndex = 0;
 
   ThemeData _theme;
   Localizer _localizer;
@@ -28,13 +27,24 @@ class _HomePageState extends State<HomePage> {
 
   MoviesBloc _moviesBloc;
   _SearchAppBarDelegate _searchDelegate;
+  MoviesPage page;
 
+  int selectedIndex = 0;
   List<Widget> _children = [
     MoviesPage(),
-    MoviesPage(),
+    Container(),
     MoviesPage(),
   ];
   void _onTabTapped(int index) {
+    if(index == 0){
+      _moviesBloc.add(LoadMovies());
+    }
+    else if(index == 1){
+      _moviesBloc.add(LoadTopRatingMovies());
+    }
+    else if(index == 2){
+      _moviesBloc.add(LoadMoviesByGenre(genreId: 0));
+    }
       setState(() {
         selectedIndex = index;
       });

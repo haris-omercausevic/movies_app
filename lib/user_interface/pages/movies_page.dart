@@ -1,13 +1,13 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
 import 'package:movies_app/blocs/movies/all.dart';
-import 'package:movies_app/config/app_settings.dart';
 import 'package:movies_app/models/entities/movie.dart';
-import 'package:movies_app/models/entities/movie_item.dart';
-import 'package:movies_app/repositories/movies_repository.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+
+
 
 class MoviesPage extends StatefulWidget {
   MoviesPage({Key key}) : super(key: key);
@@ -52,7 +52,6 @@ class _MoviesPageState extends State<MoviesPage> {
                     return Loader();
                   }
                   else if (state is LoadedMovies) {
-                    //_searchDelegate = _SearchAppBarDelegate(state.movies.results);
                     return buildColumnWithData(state.movies);
                   }
                   else if(state is Initial)

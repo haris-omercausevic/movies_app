@@ -22,13 +22,21 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
     if(event is LoadMainPage){
       yield* _loadMainPage();
     }
-    if(event is LoadMovies){
+    if(event is LoadMovies){ // popular, trending
       yield* _loadMovies();
     }
 
-    if(event is LoadMoviesByGenre){
+  if(event is LoadMoviesByGenre){ // genre
       yield* _loadMovies(genreId: event.genreId);
       //yield* _loadMoviesByGenre(event.genreId);
+    }
+     
+     if(event is LoadTopRatingMovies){ // top raitng
+      yield* _loadMovies();
+    }
+
+     if(event is LoadUpcomingMovies){ //upcoming
+      yield* _loadMovies();
     }
     
     // if(event is LoadMoviesGenre){
