@@ -25,26 +25,30 @@ class _HomePageState extends State<HomePage> {
   MediaQueryData _mediaQuery;
 
   MoviesBloc _moviesBloc;
-  _SearchAppBarDelegate _searchDelegate;
-  MoviesPage page;
+  _SearchAppBarDelegate _searchDelegate = _SearchAppBarDelegate(null);
+  //MoviesPage page;
 
   int selectedIndex = 0;
   List<Widget> _children = [
     MoviesPage(),
     Container(
-      child: Center(        
+      child: Center(
         child: Text("Nothing yet!"),
       ),
     ),
     MoviesPage(),
   ];
+
   void _onTabTapped(int index) {
     if (index == 0) {
       _moviesBloc.add(LoadMovies());
+      _searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     } else if (index == 1) {
       _moviesBloc.add(LoadTopRatingMovies());
+      _searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     } else if (index == 2) {
       _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
+      _searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     }
     setState(() {
       selectedIndex = index;
@@ -58,6 +62,7 @@ class _HomePageState extends State<HomePage> {
     _navigator = Navigator.of(context);
     _mediaQuery = MediaQuery.of(context);
     _moviesBloc = BlocProvider.of<MoviesBloc>(context);
+    //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     super.didChangeDependencies();
   }
 
@@ -71,24 +76,38 @@ class _HomePageState extends State<HomePage> {
 
     return Scaffold(
       appBar: homeAppBar(),
+      body: Dismissible(
+        resizeDuration: null,
+        child: _children[selectedIndex],
+        key: ValueKey(selectedIndex),
+        onDismissed: (DismissDirection direction) {
+          print("BEF selected index: ${selectedIndex.toString()}");
+          if (direction == DismissDirection.endToStart && selectedIndex < 2) {
+            selectedIndex += 1;
+          _onTabTapped(selectedIndex);
+          }
+          else if (direction == DismissDirection.startToEnd && selectedIndex > 0) {
+            selectedIndex -= 1;
+          _onTabTapped(selectedIndex);
+          }
+          print("AFT selected index: ${selectedIndex.toString()}");
+          // setState(() {
+          //  selectedIndex += direction == DismissDirection.endToStart? 1: -1;
+          //  print("selected index: ${selectedIndex.toString()}");
+          // });
+        },
+        confirmDismiss: (DismissDirection direction) async {
+          if (direction == DismissDirection.endToStart && selectedIndex < 2) {
+            return true;
+          }
+          else if (direction == DismissDirection.startToEnd && selectedIndex > 0) {
+            return true;
+          }
+          return false;
+        } 
+      ),
+
       bottomNavigationBar: bottomNavBar(),
-      body: _children[selectedIndex]
-
-      //  BlocBuilder<MoviesBloc, MoviesState>(
-      //     bloc: _moviesBloc,
-      //     builder: (BuildContext context, MoviesState state) {
-      //       if (state is Loading) {
-      //         return Loader();
-      //       } else if (state is LoadedMovies) {
-      //         _searchDelegate = _SearchAppBarDelegate(state.movies.results);
-      //         return buildColumnWithData(state.movies);
-      //       } else if (state is Initial) {
-      //         _moviesBloc.add(LoadMovies());
-      //       }
-
-      //       return ErrorPage();
-      //     })
-      ,
     );
   }
 
@@ -99,6 +118,7 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.search),
           onPressed: () {
             showSearch(context: context, delegate: _searchDelegate);
+            print("Pressed notif");
           },
         ),
         IconButton(
@@ -111,22 +131,6 @@ class _HomePageState extends State<HomePage> {
         ),
       ],
       title: Text(AppSettings.name),
-      // bottom: TabBar(
-      //   tabs: <Widget>[
-      //     Tab(
-      //       icon: Icon(Icons.directions_bike),
-      //       text: "In theatres",
-      //     ),
-      //     Tab(
-      //       icon: Icon(Icons.directions_car),
-      //       text: "Popular",
-      //     ),
-      //     Tab(
-      //       icon: Icon(Icons.shutter_speed),
-      //       text: "Upcoming",
-      //     )
-      //   ],
-      // ),
     );
   }
 
@@ -154,33 +158,6 @@ class _HomePageState extends State<HomePage> {
           title: Text('Upcoming'),
         ),
       ],
-    );
-  }
-
-  Widget buildColumnWithData(MovieModel movies) {
-    return GridView.builder(
-      itemCount: movies.results.length,
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (BuildContext context, int index) {
-        return Card(
-          child: GridTile(
-            footer: Text(
-              movies.results[index].title,
-              style: TextStyle(color: Colors.white),
-            ),
-            child: InkResponse(
-              enableFeedback: true,
-              child: Image.network(
-                movies.results[index].poster_path,
-                fit: BoxFit.cover,
-              ),
-              onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
-                  arguments: movies.results[index]),
-            ),
-          ),
-        );
-      },
     );
   }
 }

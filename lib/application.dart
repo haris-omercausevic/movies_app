@@ -41,20 +41,10 @@ class Application extends StatelessWidget {
           child: child,
         );
       },
-      home: HomePage(),
-      // home: BlocBuilder<MoviesBloc, MoviesState>(
-      //   builder: (context, state) {
-      //     //return HomePage();
-
-      //     if (state is Loading) {
-      //       return Loader();
-      //     }
-
-     //     return HomePage();
-      //  },),
+      home: HomePage(),     
       title: AppSettings.name,
       onGenerateRoute: this._onGenerateRoute,
-      localeResolutionCallback: Localizer.getSupportedLocale,
+      localeResolutionCallback: Localizer.getSupportedLocale,      
     );
   }
 

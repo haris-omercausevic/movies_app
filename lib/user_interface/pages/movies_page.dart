@@ -41,8 +41,6 @@ class _MoviesPageState extends State<MoviesPage> {
 
   @override
   Widget build(BuildContext context) {
-    // DONE: implement build
-
     return Container(
       child: BlocBuilder<MoviesBloc, MoviesState>(
           bloc: moviesBloc,
@@ -60,73 +58,93 @@ class _MoviesPageState extends State<MoviesPage> {
   }
 
   Widget buildColumnWithData(MovieModel movies) {
-    return GridView.builder(
-      itemCount: movies.results.length,
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
-          childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 1.9), //height of GridView items
-          
+    return OrientationBuilder(
+      builder: (BuildContext context, Orientation orientation) {
+        return GridView.builder(
+          itemCount: movies.results.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: orientation == Orientation.portrait? 2 : 3,
+            //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
           ),
-      itemBuilder: (BuildContext context, int index) {
-        return Container(
-          margin: EdgeInsets.all(2.0),
-          child: Card(
-              elevation: 1.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              color: Colors.grey[300],
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  AspectRatio(
-                    aspectRatio: 16.0 / 9.0,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(10.0),
-                        topRight: Radius.circular(10.0),
-                      ),
-                      child: InkResponse(
-                        enableFeedback: true,                        
-                        child: Image.network(
-                          movies.results[index].poster_path,
-                          fit: BoxFit.cover,
+          itemBuilder: (BuildContext context, int index) {
+            return Container(
+              margin: EdgeInsets.all(2.0),
+              child: Card(
+                elevation: 1.0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+                color: Colors.grey[300],
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AspectRatio(
+                      aspectRatio: 16.0 / 9.0,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0),
                         ),
-                        onTap: () => _navigator.pushNamed(
-                            MoviesDetailsPage.routeName,
-                            arguments: movies.results[index]),
+                        child: InkResponse(
+                          enableFeedback: true,
+                          child: Image.network(
+                            movies.results[index].poster_path,
+                            fit: BoxFit.cover,
+                          ),
+                          onTap: () => _navigator.pushNamed(
+                              MoviesDetailsPage.routeName,
+                              arguments: movies.results[index]),
+                        ),
                       ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 15.0, top: 10.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Text(
-                          movies.results[index].title,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.w600),
-                        ),
-                      ],
+                    Padding(
+                      padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Text(
+                            movies.results[index].title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(
-                        left: 15.0, top: 5.0, bottom: 5.0, right: 15.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                    Padding(
+                      padding: EdgeInsets.only(
+                          left: 15.0, top: 5.0, bottom: 5.0, right: 15.0),
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          Icon(
+                            Icons.star,
+                            size: 16.0,
+                            color: Colors.yellow,
+                          ),
+                          Text(
+                            movies.results[index].vote_average.toString(),
+                          ),
+                          Spacer(),
+                          Padding(
+                            padding: EdgeInsets.only(right: 3.0),
+                            child: Icon(
+                              Icons.people,
+                              size: 16.0,
+                              color: Colors.black,
+                            ),
+                          ),
+                          Text(
+                            movies.results[index].vote_count.toString(),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-                        Icon(
-                          Icons.star,
-                          size: 16.0,
-                          color: Colors.yellow,
-                        ),
-                        Text(
-                          movies.results[index].vote_average.toString(),
-                        ),
-                        Spacer(),
                         Padding(
                           padding: EdgeInsets.only(right: 3.0),
                           child: Icon(
@@ -138,14 +156,14 @@ class _MoviesPageState extends State<MoviesPage> {
                         Text(
                           DateFormat("dd.MM.yyyy").format(DateTime.parse(
                               movies.results[index].release_date)),
-                          //movies.results[index].release_date,
                         ),
                       ],
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
+            );
+          },
         );
       },
     );
