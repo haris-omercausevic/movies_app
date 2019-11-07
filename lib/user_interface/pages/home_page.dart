@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/config/app_settings.dart';
 import 'package:movies_app/models/entities/movie.dart';
@@ -29,15 +30,7 @@ class _HomePageState extends State<HomePage> {
   //MoviesPage page;
 
   int selectedIndex = 0;
-  List<Widget> _children = [
-    MoviesPage(),
-    Container(
-      child: Center(
-        child: Text("Nothing yet!"),
-      ),
-    ),
-    MoviesPage(),
-  ];
+  List<Widget> _children;
 
   void _onTabTapped(int index) {
     if (index == 0) {
@@ -56,13 +49,31 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
+  void initState() {
+    _moviesBloc = BlocProvider.of<MoviesBloc>(context);
+    _children = [
+    MoviesPage(moviesBloc: _moviesBloc,),
+    Container(
+      child: Center(
+        child: Text("Nothing yet!"),
+      ),
+    ),
+    MoviesPage(moviesBloc: _moviesBloc,),
+  ]; 
+
+    super.initState();
+  }
+
+  
+
+  @override
   void didChangeDependencies() {
     _localizer = Localizer.of(context);
     _theme = Theme.of(context);
     _navigator = Navigator.of(context);
     _mediaQuery = MediaQuery.of(context);
-    _moviesBloc = BlocProvider.of<MoviesBloc>(context);
-    //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
+    _moviesBloc = BlocProvider.of<MoviesBloc>(context);    
+    //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);    
     super.didChangeDependencies();
   }
 
@@ -78,35 +89,29 @@ class _HomePageState extends State<HomePage> {
       appBar: homeAppBar(),
       body: Dismissible(
         resizeDuration: null,
-        child: _children[selectedIndex],
+        child: _children[selectedIndex], //MoviesPage dynamic
         key: ValueKey(selectedIndex),
         onDismissed: (DismissDirection direction) {
-          print("BEF selected index: ${selectedIndex.toString()}");
           if (direction == DismissDirection.endToStart && selectedIndex < 2) {
             selectedIndex += 1;
-          _onTabTapped(selectedIndex);
-          }
-          else if (direction == DismissDirection.startToEnd && selectedIndex > 0) {
+            _onTabTapped(selectedIndex);
+          } else if (direction == DismissDirection.startToEnd &&
+              selectedIndex > 0) {
             selectedIndex -= 1;
-          _onTabTapped(selectedIndex);
-          }
-          print("AFT selected index: ${selectedIndex.toString()}");
-          // setState(() {
-          //  selectedIndex += direction == DismissDirection.endToStart? 1: -1;
-          //  print("selected index: ${selectedIndex.toString()}");
-          // });
+            _onTabTapped(selectedIndex);
+          }         
         },
         confirmDismiss: (DismissDirection direction) async {
           if (direction == DismissDirection.endToStart && selectedIndex < 2) {
             return true;
-          }
-          else if (direction == DismissDirection.startToEnd && selectedIndex > 0) {
+          } else if (direction == DismissDirection.startToEnd &&
+              selectedIndex > 0) {
             return true;
           }
           return false;
-        } 
+        },
+        //movementDuration: Duration(milliseconds: 300),
       ),
-
       bottomNavigationBar: bottomNavBar(),
     );
   }
@@ -259,6 +264,8 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   }
 }
 
+//TODO: https://github.com/SAGARSURI/PixelPerfect
+//pogledati ovaj search
 class _WordSuggestionList extends StatelessWidget {
   const _WordSuggestionList({this.suggestions, this.query, this.onSelected});
 
@@ -273,8 +280,17 @@ class _WordSuggestionList extends StatelessWidget {
       itemCount: suggestions.length,
       itemBuilder: (BuildContext context, int i) {
         final MovieItem suggestion = suggestions[i];
-        return ListTile(
-          leading: query.isEmpty ? Icon(Icons.history) : Icon(null),
+        return ListTile(          
+          leading: Tab(                
+                  icon: Container(
+                    child: Image.network(
+                      suggestion.poster_path, //TODO: test
+                      fit: BoxFit.cover,
+                    ),
+                   height: 100,
+                   width: 100,
+                  ),
+                ),
           // Highlight the substring that matched the query.
           title: RichText(
             text: TextSpan(
@@ -288,6 +304,9 @@ class _WordSuggestionList extends StatelessWidget {
               ],
             ),
           ),
+          subtitle:
+              //Text(suggestion == null? "": DateTime.parse(suggestion.release_date).year.toString()),
+              Text(DateTime.parse(suggestion.release_date).year.toString()),
           onTap: () {
             onSelected(suggestion);
           },

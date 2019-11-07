@@ -9,15 +9,16 @@ import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
 class MoviesPage extends StatefulWidget {
-  MoviesPage({Key key}) : super(key: key);
   static const routeName = "/MoviesPage";
+  final MoviesBloc moviesBloc;
+  MoviesPage({@required this.moviesBloc, Key key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _MoviesPageState();
 }
 
 class _MoviesPageState extends State<MoviesPage> {
-  MoviesBloc moviesBloc;
+  //MoviesBloc moviesBloc;
   ThemeData _theme;
   Localizer _localizer;
   AppThemeData _appTheme;
@@ -35,7 +36,7 @@ class _MoviesPageState extends State<MoviesPage> {
     _theme = Theme.of(context);
     _navigator = Navigator.of(context);
     _mediaQuery = MediaQuery.of(context);
-    moviesBloc = BlocProvider.of<MoviesBloc>(context);
+    //moviesBloc = BlocProvider.of<MoviesBloc>(context);
     super.didChangeDependencies();
   }
 
@@ -43,14 +44,14 @@ class _MoviesPageState extends State<MoviesPage> {
   Widget build(BuildContext context) {
     return Container(
       child: BlocBuilder<MoviesBloc, MoviesState>(
-          bloc: moviesBloc,
+          bloc: widget.moviesBloc,
           builder: (BuildContext context, MoviesState state) {
             if (state is Loading) {
               return Loader();
             } else if (state is LoadedMovies) {
               return buildColumnWithData(state.movies);
             } else if (state is Initial) {
-              moviesBloc.add(LoadMovies());
+              widget.moviesBloc.add(LoadMovies());              
             }
             return ErrorPage();
           }),
@@ -63,7 +64,7 @@ class _MoviesPageState extends State<MoviesPage> {
         return GridView.builder(
           itemCount: movies.results.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: orientation == Orientation.portrait? 2 : 3,
+            crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
             //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
           ),
           itemBuilder: (BuildContext context, int index) {
