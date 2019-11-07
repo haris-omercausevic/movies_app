@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'package:movies_app/config/all.dart';
@@ -7,6 +8,8 @@ import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/user_interface/pages/movies_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
+
+import 'blocs/movies/movies_bloc.dart';
 
 
 class Application extends StatelessWidget {
@@ -53,7 +56,7 @@ class Application extends StatelessWidget {
       case HomePage.routeName:
         return MaterialPageRoute(builder: (_) => HomePage(), settings: settings);
       case MoviesPage.routeName:
-        return MaterialPageRoute(builder: (_) => MoviesPage(), settings: settings);
+        return MaterialPageRoute(builder: (_) => MoviesPage(moviesBloc: settings.arguments), settings: settings);
       case MoviesDetailsPage.routeName:
         return MaterialPageRoute(builder: (_) => MoviesDetailsPage(movieItem: settings.arguments,), settings: settings);
     }

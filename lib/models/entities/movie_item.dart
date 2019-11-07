@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:movies_app/config/app_settings.dart';
 
 class MovieItem {
@@ -25,7 +27,8 @@ class MovieItem {
     _vote_average = result['vote_average'].toDouble();
     _title = result['title'];
     _popularity = result['popularity'];
-    _poster_path = imagePath + result['poster_path'];    //image path + poster_path URI
+    _poster_path =
+        imagePath + result['poster_path']; //image path + poster_path URI
     _original_language = result['original_language'];
     _original_title = result['original_title'];
     for (int i = 0; i < result['genre_ids'].length; i++) {
@@ -37,6 +40,22 @@ class MovieItem {
     _release_date = result['release_date'];
   }
 
+  Map<String, dynamic> toJson() => {
+        'vote_count': _vote_count,
+        'id': _id,
+        'video': _video,
+        'vote_average': _vote_average,
+        'title': _title,
+        'popularity': _popularity,
+        'poster_path': _poster_path,
+        'original_language': _original_language,
+        'original_title': _original_title,
+        'genre_ids': _genre_ids,
+        'backdrop_path': _backdrop_path,
+        'adult': _adult,
+        'overview': _overview,
+        'release_date': _release_date,
+      };
   String get release_date => _release_date;
 
   String get overview => _overview;

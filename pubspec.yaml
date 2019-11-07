@@ -25,6 +25,8 @@ dependencies:
   shared_preferences:
   flutter_launcher_icons:
   flutter_facebook_login:
+  speech_recognition:
+
 
 flutter:
   uses-material-design: true

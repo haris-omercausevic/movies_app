@@ -1,15 +1,18 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:intl/intl.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/config/app_settings.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/models/entities/movie_item.dart';
+import 'package:movies_app/repositories/all.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
-import 'movies_details_page.dart';
+import 'package:speech_recognition/speech_recognition.dart';
 
 class HomePage extends StatefulWidget {
   static const routeName = "/";
@@ -26,8 +29,8 @@ class _HomePageState extends State<HomePage> {
   MediaQueryData _mediaQuery;
 
   MoviesBloc _moviesBloc;
-  _SearchAppBarDelegate _searchDelegate = _SearchAppBarDelegate(null);
-  //MoviesPage page;
+  _SearchAppBarDelegate _searchDelegate;
+  SpeechRecognition _speech = SpeechRecognition();
 
   int selectedIndex = 0;
   List<Widget> _children;
@@ -35,13 +38,11 @@ class _HomePageState extends State<HomePage> {
   void _onTabTapped(int index) {
     if (index == 0) {
       _moviesBloc.add(LoadMovies());
-      _searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     } else if (index == 1) {
       _moviesBloc.add(LoadTopRatingMovies());
-      _searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     } else if (index == 2) {
       _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
-      _searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
+      //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     }
     setState(() {
       selectedIndex = index;
@@ -51,20 +52,23 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     _moviesBloc = BlocProvider.of<MoviesBloc>(context);
+    _searchDelegate = _SearchAppBarDelegate(moviesBloc: _moviesBloc);
     _children = [
-    MoviesPage(moviesBloc: _moviesBloc,),
-    Container(
-      child: Center(
-        child: Text("Nothing yet!"),
+      MoviesPage(
+        moviesBloc: _moviesBloc,
       ),
-    ),
-    MoviesPage(moviesBloc: _moviesBloc,),
-  ]; 
+      Container(
+        child: Center(
+          child: Text("Nothing yet.."),
+        ),
+      ),
+      MoviesPage(
+        moviesBloc: _moviesBloc,
+      ),
+    ];
 
     super.initState();
   }
-
-  
 
   @override
   void didChangeDependencies() {
@@ -72,8 +76,8 @@ class _HomePageState extends State<HomePage> {
     _theme = Theme.of(context);
     _navigator = Navigator.of(context);
     _mediaQuery = MediaQuery.of(context);
-    _moviesBloc = BlocProvider.of<MoviesBloc>(context);    
-    //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);    
+    _moviesBloc = BlocProvider.of<MoviesBloc>(context);
+    //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
     super.didChangeDependencies();
   }
 
@@ -99,7 +103,7 @@ class _HomePageState extends State<HomePage> {
               selectedIndex > 0) {
             selectedIndex -= 1;
             _onTabTapped(selectedIndex);
-          }         
+          }
         },
         confirmDismiss: (DismissDirection direction) async {
           if (direction == DismissDirection.endToStart && selectedIndex < 2) {
@@ -167,18 +171,38 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+//mozda je bolja opcija koristiti bloc i raditi api request na search
 class _SearchAppBarDelegate extends SearchDelegate<String> {
-  final List<MovieItem> _movies;
   //list holds history search words.
-  final List<MovieItem> _history;
+  final MoviesBloc moviesBloc;
+  static const String _searchHistoryListKey = "searchHistoryListKey";
+
+  List<MovieItem> _history = [];
 
   //initialize delegate with full word list and history words
-  _SearchAppBarDelegate(List<MovieItem> movies)
-      : _movies = movies,
-        _history = <MovieItem>[],
-        //pre-populated history of words
-        //_history = <String>['apple', 'orange', 'banana', 'watermelon'],
-        super();
+  _SearchAppBarDelegate({@required this.moviesBloc}) : super()
+  // : _history =  json.decode(moviesBloc.moviesRepository.storageRepository
+  //       .getString(_searchHistoryListKey)) as List<MovieItem>,
+  //TODO: load from storageRepository -> sharedPrefs..
+  {
+    //Load history from storage repository
+    moviesBloc.add(LoadMovies());
+    if (moviesBloc != null) {
+      var temp = moviesBloc.moviesRepository.storageRepository
+          .getString(_searchHistoryListKey);
+
+      var parsedJson = temp != null?json.decode(temp):null;
+
+      if (parsedJson != null) {
+        List<MovieItem> temp = [];
+        for (int i = 0; i < parsedJson.length; i++) {
+          MovieItem result = MovieItem(parsedJson[i]);
+          temp.add(result);
+        }
+        _history = temp;
+      }
+    }
+  }
 
   @override
   List<Widget> buildActions(BuildContext context) {
@@ -248,9 +272,13 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
+    //TODO: Call search method
+    // BLOC, api request, suggestions =
+    //Iterable<MovieItem> suggestions = this.query.isEmpty?_history:apiRequest.search(this.query);
     final Iterable<MovieItem> suggestions = this.query.isEmpty
         ? _history
-        : _movies.where((word) => word.title.startsWith(query));
+        : moviesBloc.state.movies.results
+            .where((movie) => movie.title.startsWith(query));
 
     //calling wordsuggestion list
     return _WordSuggestionList(
@@ -259,6 +287,8 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
         onSelected: (MovieItem suggestion) {
           this.query = suggestion.title;
           this._history.insert(0, suggestion);
+          moviesBloc.moviesRepository.storageRepository
+              .setString(_searchHistoryListKey, json.encode(_history));
           showResults(context);
         });
   }
@@ -280,17 +310,17 @@ class _WordSuggestionList extends StatelessWidget {
       itemCount: suggestions.length,
       itemBuilder: (BuildContext context, int i) {
         final MovieItem suggestion = suggestions[i];
-        return ListTile(          
-          leading: Tab(                
-                  icon: Container(
-                    child: Image.network(
-                      suggestion.poster_path, //TODO: test
-                      fit: BoxFit.cover,
-                    ),
-                   height: 100,
-                   width: 100,
-                  ),
-                ),
+        return ListTile(
+          leading: Tab(
+            icon: Container(
+              child: Image.network(
+                suggestion.poster_path, //TODO: test
+                fit: BoxFit.cover,
+              ),
+              height: 100,
+              width: 100,
+            ),
+          ),
           // Highlight the substring that matched the query.
           title: RichText(
             text: TextSpan(
