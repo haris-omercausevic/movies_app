@@ -18,7 +18,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   ThemeData _theme;
   Localizer _localizer;
   AppThemeData _appTheme;
@@ -32,22 +31,24 @@ class _HomePageState extends State<HomePage> {
   int selectedIndex = 0;
   List<Widget> _children = [
     MoviesPage(),
-    Container(),
+    Container(
+      child: Center(        
+        child: Text("Nothing yet!"),
+      ),
+    ),
     MoviesPage(),
   ];
   void _onTabTapped(int index) {
-    if(index == 0){
+    if (index == 0) {
       _moviesBloc.add(LoadMovies());
-    }
-    else if(index == 1){
+    } else if (index == 1) {
       _moviesBloc.add(LoadTopRatingMovies());
+    } else if (index == 2) {
+      _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
     }
-    else if(index == 2){
-      _moviesBloc.add(LoadMoviesByGenre(genreId: 0));
-    }
-      setState(() {
-        selectedIndex = index;
-      });
+    setState(() {
+      selectedIndex = index;
+    });
   }
 
   @override
@@ -72,7 +73,7 @@ class _HomePageState extends State<HomePage> {
       appBar: homeAppBar(),
       bottomNavigationBar: bottomNavBar(),
       body: _children[selectedIndex]
-      
+
       //  BlocBuilder<MoviesBloc, MoviesState>(
       //     bloc: _moviesBloc,
       //     builder: (BuildContext context, MoviesState state) {
@@ -87,61 +88,7 @@ class _HomePageState extends State<HomePage> {
 
       //       return ErrorPage();
       //     })
-          ,
-    );
-  }
-
-  Widget buildColumnWithData(MovieModel movies) {
-    return GridView.builder(
-      itemCount: movies.results.length,
-      gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (BuildContext context, int index) {
-        return Card(
-          child: GridTile(
-            footer: Text(
-              movies.results[index].title,
-              style: TextStyle(color: Colors.white),
-            ),
-            child: InkResponse(
-              enableFeedback: true,
-              child: Image.network(
-                movies.results[index].poster_path,
-                fit: BoxFit.cover,
-              ),
-              onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
-                  arguments: movies.results[index]),
-            ),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget bottomNavBar() {
-    return BottomNavigationBar(
-      currentIndex: selectedIndex,
-      type: BottomNavigationBarType.fixed,
-      backgroundColor: Colors.black,
-      selectedItemColor: Colors.white,
-      unselectedItemColor: Colors.white,
-      selectedFontSize: 8,
-      unselectedFontSize: 8,
-      onTap: _onTabTapped,
-      items: [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.home),
-          title: Text('Popular'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.rss_feed),
-          title: Text('In theatres'),
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.new_releases),
-          title: Text('Upcoming'),
-        ),
-      ],
+      ,
     );
   }
 
@@ -182,7 +129,62 @@ class _HomePageState extends State<HomePage> {
       // ),
     );
   }
+
+  Widget bottomNavBar() {
+    return BottomNavigationBar(
+      currentIndex: selectedIndex,
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: Colors.black,
+      selectedItemColor: Colors.white,
+      unselectedItemColor: Colors.white,
+      selectedFontSize: 8,
+      unselectedFontSize: 8,
+      onTap: _onTabTapped,
+      items: [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.home),
+          title: Text('Popular'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.rss_feed),
+          title: Text('In theatres'),
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.new_releases),
+          title: Text('Upcoming'),
+        ),
+      ],
+    );
+  }
+
+  Widget buildColumnWithData(MovieModel movies) {
+    return GridView.builder(
+      itemCount: movies.results.length,
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
+      itemBuilder: (BuildContext context, int index) {
+        return Card(
+          child: GridTile(
+            footer: Text(
+              movies.results[index].title,
+              style: TextStyle(color: Colors.white),
+            ),
+            child: InkResponse(
+              enableFeedback: true,
+              child: Image.network(
+                movies.results[index].poster_path,
+                fit: BoxFit.cover,
+              ),
+              onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
+                  arguments: movies.results[index]),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
+
 class _SearchAppBarDelegate extends SearchDelegate<String> {
   final List<MovieItem> _movies;
   //list holds history search words.

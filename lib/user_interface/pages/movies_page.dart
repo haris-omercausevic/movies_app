@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
 
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
-
-
 
 class MoviesPage extends StatefulWidget {
   MoviesPage({Key key}) : super(key: key);
@@ -45,49 +44,110 @@ class _MoviesPageState extends State<MoviesPage> {
     // DONE: implement build
 
     return Container(
-            child: BlocBuilder<MoviesBloc, MoviesState>(
-                bloc: moviesBloc,
-                builder: (BuildContext context, MoviesState state) {
-                  if (state is Loading) {
-                    return Loader();
-                  }
-                  else if (state is LoadedMovies) {
-                    return buildColumnWithData(state.movies);
-                  }
-                  else if(state is Initial)
-                  {
-                    moviesBloc.add(LoadMovies());
-                  }
-                  return ErrorPage();
-                }),
-          );
+      child: BlocBuilder<MoviesBloc, MoviesState>(
+          bloc: moviesBloc,
+          builder: (BuildContext context, MoviesState state) {
+            if (state is Loading) {
+              return Loader();
+            } else if (state is LoadedMovies) {
+              return buildColumnWithData(state.movies);
+            } else if (state is Initial) {
+              moviesBloc.add(LoadMovies());
+            }
+            return ErrorPage();
+          }),
+    );
   }
 
-   Widget buildColumnWithData(MovieModel movies) {
+  Widget buildColumnWithData(MovieModel movies) {
     return GridView.builder(
       itemCount: movies.results.length,
       gridDelegate:
-          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2),
-      itemBuilder: (BuildContext context, int index) {
-        return Card(
-          child: GridTile(
-            footer: Text(
-              movies.results[index].title,
-              style: TextStyle(color: Colors.white),
-            ),
-            child: InkResponse(
-              enableFeedback: true,
-              child: Image.network(
-                movies.results[index].poster_path,
-                fit: BoxFit.cover,
-              ),
-              onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
-                  arguments: movies.results[index]),
-            ),
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2,
+          childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 1.9), //height of GridView items
+          
           ),
+      itemBuilder: (BuildContext context, int index) {
+        return Container(
+          margin: EdgeInsets.all(2.0),
+          child: Card(
+              elevation: 1.0,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+              color: Colors.grey[300],
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  AspectRatio(
+                    aspectRatio: 16.0 / 9.0,
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(10.0),
+                        topRight: Radius.circular(10.0),
+                      ),
+                      child: InkResponse(
+                        enableFeedback: true,                        
+                        child: Image.network(
+                          movies.results[index].poster_path,
+                          fit: BoxFit.cover,
+                        ),
+                        onTap: () => _navigator.pushNamed(
+                            MoviesDetailsPage.routeName,
+                            arguments: movies.results[index]),
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 15.0, top: 10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Text(
+                          movies.results[index].title,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                        left: 15.0, top: 5.0, bottom: 5.0, right: 15.0),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Icon(
+                          Icons.star,
+                          size: 16.0,
+                          color: Colors.yellow,
+                        ),
+                        Text(
+                          movies.results[index].vote_average.toString(),
+                        ),
+                        Spacer(),
+                        Padding(
+                          padding: EdgeInsets.only(right: 3.0),
+                          child: Icon(
+                            Icons.event_note,
+                            size: 16.0,
+                            color: Colors.black,
+                          ),
+                        ),
+                        Text(
+                          DateFormat("dd.MM.yyyy").format(DateTime.parse(
+                              movies.results[index].release_date)),
+                          //movies.results[index].release_date,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
         );
       },
     );
   }
-
 }
