@@ -42,6 +42,12 @@ class _MoviesPageState extends State<MoviesPage> {
 
   @override
   Widget build(BuildContext context) {
+    final double statusBarHeight = _mediaQuery.padding.top / 2;
+    final screenHeightPercent = (_mediaQuery.size.height -
+            _mediaQuery.padding.top -
+            kBottomNavigationBarHeight) /
+        100;
+
     return Container(
       child: BlocBuilder<MoviesBloc, MoviesState>(
           bloc: widget.moviesBloc,
@@ -49,7 +55,7 @@ class _MoviesPageState extends State<MoviesPage> {
             if (state is Loading) {
               return Loader();
             } else if (state is LoadedMovies) {
-              return buildColumnWithData(state.movies);
+              return Container(child: buildColumnWithData(state.movies));
             } else if (state is Initial) {
               widget.moviesBloc.add(LoadMovies());              
             }

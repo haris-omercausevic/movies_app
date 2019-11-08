@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:movies_app/config/app_settings.dart';
 
 class MovieItem {
@@ -20,15 +18,19 @@ class MovieItem {
 
   final imagePath = AppSettings.imageUrl;
 
-  MovieItem(result) {
+  MovieItem(result, {bool isUrl = false}) {
     _vote_count = result['vote_count'];
     _id = result['id'];
     _video = result['video'];
     _vote_average = result['vote_average'].toDouble();
     _title = result['title'];
     _popularity = result['popularity'];
-    _poster_path =
-        imagePath + result['poster_path']; //image path + poster_path URI
+    if (isUrl == true) {
+      _poster_path =
+          result['poster_path'];
+    } else {
+      _poster_path = imagePath + result['poster_path'];
+    }
     _original_language = result['original_language'];
     _original_title = result['original_title'];
     for (int i = 0; i < result['genre_ids'].length; i++) {

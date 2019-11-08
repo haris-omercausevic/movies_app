@@ -1,13 +1,10 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/config/app_settings.dart';
-import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/models/entities/movie_item.dart';
-import 'package:movies_app/repositories/all.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
@@ -183,11 +180,10 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
   _SearchAppBarDelegate({@required this.moviesBloc}) : super()
   // : _history =  json.decode(moviesBloc.moviesRepository.storageRepository
   //       .getString(_searchHistoryListKey)) as List<MovieItem>,
-  //TODO: load from storageRepository -> sharedPrefs..
+  //DONE: load from storageRepository -> sharedPrefs..
   {
     //Load history from storage repository
     moviesBloc.add(LoadMovies());
-    if (moviesBloc != null) {
       var temp = moviesBloc.moviesRepository.storageRepository
           .getString(_searchHistoryListKey);
 
@@ -196,12 +192,11 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
       if (parsedJson != null) {
         List<MovieItem> temp = [];
         for (int i = 0; i < parsedJson.length; i++) {
-          MovieItem result = MovieItem(parsedJson[i]);
+          MovieItem result = MovieItem(parsedJson[i], isUrl: true);
           temp.add(result);
         }
         _history = temp;
       }
-    }
   }
 
   @override
@@ -220,7 +215,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
               icon: const Icon(Icons.mic),
               tooltip: 'Voice input',
               onPressed: () {
-                this.query = 'TBW: Get input from voice';
+                this.query = 'Not yet implemented.';
               },
             ),
     ];
@@ -278,7 +273,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
     final Iterable<MovieItem> suggestions = this.query.isEmpty
         ? _history
         : moviesBloc.state.movies.results
-            .where((movie) => movie.title.startsWith(query));
+            .where((movie) => movie.title.toLowerCase().startsWith(query.toLowerCase()));
 
     //calling wordsuggestion list
     return _WordSuggestionList(
@@ -286,7 +281,11 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
         suggestions: suggestions.toList(),
         onSelected: (MovieItem suggestion) {
           this.query = suggestion.title;
+
+          //_history remove existing item and add it back on top
+          _history.isEmpty? null: this._history.removeWhere((item) => item.id == suggestion.id);
           this._history.insert(0, suggestion);
+
           moviesBloc.moviesRepository.storageRepository
               .setString(_searchHistoryListKey, json.encode(_history));
           showResults(context);
@@ -295,7 +294,7 @@ class _SearchAppBarDelegate extends SearchDelegate<String> {
 }
 
 //TODO: https://github.com/SAGARSURI/PixelPerfect
-//pogledati ovaj search
+//pregledati malo ovaj search
 class _WordSuggestionList extends StatelessWidget {
   const _WordSuggestionList({this.suggestions, this.query, this.onSelected});
 
@@ -314,7 +313,7 @@ class _WordSuggestionList extends StatelessWidget {
           leading: Tab(
             icon: Container(
               child: Image.network(
-                suggestion.poster_path, //TODO: test
+                suggestion.poster_path,
                 fit: BoxFit.cover,
               ),
               height: 100,
