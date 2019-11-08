@@ -18,20 +18,17 @@ class MoviesRepository extends BaseRepository {
   final accessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NzI3OTQzMjgsInN1YiI6IjVkYmVjZTcyZWZlMzdjMDAxODgzMjU2OCIsImp0aSI6IjE2NDUxMzYiLCJhdWQiOiI2ZDE2ZTBkY2MxYjlkMDhkYTJlZThlY2E5YTc0ZTEyMyIsInNjb3BlcyI6WyJhcGlfcmVhZCIsImFwaV93cml0ZSJdLCJ2ZXJzaW9uIjoxfQ.lBw3FNKCVvVZ3DPPJfU6ljOa0sgtHtAm3Lg_FLj8UV4";
 
+  String RouteMoviePopular = "/3/movie/popular";
+  String RouteDiscoverMovie = "/3/discover/movie";
+
   MoviesRepository({
     @required ApiClient apiClient,
     @required this.storageRepository,
   })  : assert(storageRepository != null),
         super(apiClient: apiClient);
 
-  void setUnauthorizedCallback(Function callback) {
-    apiClient.setUnauthorizedCallback(callback);
-  }
-
   Future<MovieModel> getMovies({int genreId = 0}) async {
     try {
-      String RouteMoviePopular = "/3/movie/popular";
-      String RouteDiscoverMovie = "/3/discover/movie";
       int comedyId = 35;
 
       final response = genreId == 0
@@ -60,7 +57,8 @@ class MoviesRepository extends BaseRepository {
     try {
       String uri = "/3/genre/movie/list";
 
-      final response = await super.apiClient.get(uri, queryParameters: {"api_key":_apiKey});
+      final response =
+          await super.apiClient.get(uri, queryParameters: {"api_key": _apiKey});
       if (response.statusCode == HttpStatus.ok) {
         return GenreModel.fromJson(response.data);
       } else {

@@ -128,8 +128,8 @@ class _HomePageState extends State<HomePage> {
           },
         ),
         IconButton(
-          icon: Icon(Icons.notifications),
-          onPressed: () => print("Pressed notif"),
+          icon: Icon(Icons.favorite),
+          onPressed: () => print("Pressed favorites"),
         ),
         IconButton(
           onPressed: () => print("Pressed profile!"),
@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
-//mozda je bolja opcija koristiti bloc i raditi api request na search
+//TODO: prepraviti da koristi api search request  https://api.themoviedb.org/3/search/movie?query=A
 class _SearchAppBarDelegate extends SearchDelegate<String> {
   //list holds history search words.
   final MoviesBloc moviesBloc;

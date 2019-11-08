@@ -18,10 +18,10 @@ class MovieModel {
     results = temp;
   }
 
-  MovieModel(
-      {this.page, this.totalpages, this.results, this.totalresults});
+  MovieModel({
+    this.page,
+    this.totalpages,
+    this.results,
+    this.totalresults,
+  });
 }
-
-
-
-

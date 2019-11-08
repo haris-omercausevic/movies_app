@@ -16,7 +16,7 @@ class MovieItem {
   String _overview;
   String _release_date;
 
-  final imagePath = AppSettings.imageUrl;
+  final imagePath = AppSettings.imageUrlW185;
 
   MovieItem(result, {bool isUrl = false}) {
     _vote_count = result['vote_count'];
