@@ -73,3 +73,4 @@ class UserListModel {
       "number_of_items":number_of_items,
     };
 }
+}

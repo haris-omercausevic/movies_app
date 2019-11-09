@@ -20,13 +20,13 @@ class UsersRepository extends BaseRepository {
   final accessToken =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NzI3OTQzMjgsInN1YiI6IjVkYmVjZTcyZWZlMzdjMDAxODgzMjU2OCIsImp0aSI6IjE2NDUxMzYiLCJhdWQiOiI2ZDE2ZTBkY2MxYjlkMDhkYTJlZThlY2E5YTc0ZTEyMyIsInNjb3BlcyI6WyJhcGlfcmVhZCIsImFwaV93cml0ZSJdLCJ2ZXJzaW9uIjoxfQ.lBw3FNKCVvVZ3DPPJfU6ljOa0sgtHtAm3Lg_FLj8UV4";
 
-      String ActionsLists = "list";
-      String ActionsMovieFavorites = "movie/favorites";
-      String ActionsMovieWatchlist = "movie/watchlist";
-      String ActionsTvFavorites = "tv/favorites";
-      String ActionsTvWatchlist = "tv/watchlist";
+  String ActionsLists = "list";
+  String ActionsMovieFavorites = "movie/favorites";
+  String ActionsMovieWatchlist = "movie/watchlist";
+  String ActionsTvFavorites = "tv/favorites";
+  String ActionsTvWatchlist = "tv/watchlist";
 
-      String routeRequestTokenNew = "/3/authentication/token/new";
+  String routeRequestTokenNew = "/3/authentication/token/new";
 
   UsersRepository({
     @required ApiClient apiClient,
@@ -34,41 +34,53 @@ class UsersRepository extends BaseRepository {
   })  : assert(storageRepository != null),
         super(apiClient: apiClient);
 
-Future<String> getRequestToken() async{
-try{
-    final responseRequestToken = await super.apiClient.get(routeRequestTokenNew);
-    if(responseRequestToken.statusCode == HttpStatus.ok){
-      return responseRequestToken.data['request_token'];
+  void setUnauthorizedCallback(Function callback) {
+    apiClient.setUnauthorizedCallback(callback);
+  }
+
+  Future<String> getRequestToken() async {
+    try {
+      final responseRequestToken =
+          await super.apiClient.get(routeRequestTokenNew);
+      if (responseRequestToken.statusCode == HttpStatus.ok) {
+        return responseRequestToken.data['request_token'];
+      }
+    } catch (e) {
+      print(e);
     }
-  }
-  catch(e){
-    print(e);
+
+    return null;
   }
 
-  return null;
-}
-Future<UserModel> authenticationSimulator() async{
+  UserModel getCurrentUser() {
+    var currentUserString = storageRepository.getString(Keys.currentUser);
+    return currentUserString != null
+        ? UserModel.fromJson(json.decode(currentUserString))
+        : null;
+  }
 
-  try{ final responseRequestToken = await super.apiClient.get(routeRequestTokenNew);
-    if(responseRequestToken.statusCode == HttpStatus.ok){
-      return responseRequestToken.data['request_token'];
+  Future<UserModel> authenticationSimulator() async {
+    try {
+      final responseRequestToken =
+          await super.apiClient.get(routeRequestTokenNew);
+      if (responseRequestToken.statusCode == HttpStatus.ok) {
+        return responseRequestToken.data['request_token'];
+      }
+    } catch (e) {
+      print(e);
     }
-  }
-  catch(e){
-    print(e);
+
+    return null;
   }
 
-  return null;
-}
 //ovo bi se inace trebalo izvrsiti nakon uspjesnog logina
   Future<UserListModel> getUserLists() async {
     try {
       String RouteAccount = "/4/account/$accountId/";
       final response = await super.apiClient.get(RouteAccount + ActionsLists);
-      if(response.statusCode == HttpStatus.ok){
+      if (response.statusCode == HttpStatus.ok) {
         return UserListModel.fromJson(response.data);
-      }
-      else{
+      } else {
         throw Exception("Error code: ${response.statusCode}");
       }
     } catch (e) {
@@ -77,8 +89,9 @@ Future<UserModel> authenticationSimulator() async{
     return null;
   }
 
-   Future<bool> setCurrentUser(UserModel user) async {
-    return storageRepository.setString(Keys.currentUser, json.encode(user.toJson()));
+  Future<bool> setCurrentUser(UserModel user) async {
+    return storageRepository.setString(
+        Keys.currentUser, json.encode(user.toJson()));
   }
 
 //ovo se izvrsi u mainu automatski zasad jer nema logina, komplikovano token dobit bez logiranja na pravu stranicu
