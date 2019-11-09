@@ -26,6 +26,7 @@ dependencies:
   flutter_launcher_icons:
   flutter_facebook_login:
   speech_recognition:
+  webview_flutter:
 
 
 flutter:

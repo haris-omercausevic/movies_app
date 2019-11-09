@@ -1,4 +1,4 @@
-class UserModel {
+class UserListModel {
   String iso_639_1;
   int id;
   int featured;
@@ -16,7 +16,7 @@ class UserModel {
   bool adult;
   int number_of_items;
 
-  UserModel({
+  UserListModel({
     this.iso_639_1,
     this.id,
     this.featured,
@@ -36,7 +36,7 @@ class UserModel {
   });
 
 //pripaziti da se proslijedi json.results[0], a ne citav json objekat sa page, total_pages
-  UserModel.fromJson(Map<String, dynamic> parsedJson) {
+  UserListModel.fromJson(Map<String, dynamic> parsedJson) {
     iso_639_1 = parsedJson['iso_639_1'];
     id = parsedJson['id'];
     featured = parsedJson['featured'];
@@ -55,7 +55,7 @@ class UserModel {
     number_of_items = parsedJson['number_of_items'];
   }
 
-  Map<String, dynamic> toJson(){
+   Map<String, dynamic> toJson(){
     return {
       "iso_639_1":iso_639_1,
       "id":id,
@@ -72,5 +72,4 @@ class UserModel {
       "adult":adult,
       "number_of_items":number_of_items,
     };
-  }
 }

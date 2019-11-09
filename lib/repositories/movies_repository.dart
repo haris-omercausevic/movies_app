@@ -29,16 +29,15 @@ class MoviesRepository extends BaseRepository {
 
   Future<MovieModel> getMovies({int genreId = 0}) async {
     try {
-      int comedyId = 35;
+      int comedyId = 35; // hardcoded for now
 
       final response = genreId == 0
           ? await super.apiClient.get(
-              RouteMoviePopular,
-              queryParameters: {"api_key": _apiKey},
+              RouteMoviePopular
             )
           : await super.apiClient.get(
               RouteDiscoverMovie,
-              queryParameters: {"api_key": _apiKey, "with_genres": comedyId},
+              queryParameters: {"with_genres": comedyId},
             );
 
       if (response.statusCode == HttpStatus.ok) {
@@ -70,25 +69,25 @@ class MoviesRepository extends BaseRepository {
     return null;
   }
 
-  Future<List<GenreModel>> getGenresList() async {
-    //ne koristi se jos
-    try {
-      String uri = "/3/genre/movie/list?api_key=$_apiKey";
+  // Future<List<GenreModel>> getGenresList() async {
+  //   //ne koristi se jos
+  //   try {
+  //     String uri = "/3/genre/movie/list?api_key=$_apiKey";
 
-      final response = await super.apiClient.get(uri);
-      if (response.statusCode == HttpStatus.ok) {
-        final items = json.decode(response.data).cast<Map<String, dynamic>>();
-        List<GenreModel> listofGenres = items.map<GenreModel>((json) {
-          return GenreModel.fromJson(json);
-        }).toList();
+  //     final response = await super.apiClient.get(uri);
+  //     if (response.statusCode == HttpStatus.ok) {
+  //       final items = json.decode(response.data).cast<Map<String, dynamic>>();
+  //       List<GenreModel> listofGenres = items.map<GenreModel>((json) {
+  //         return GenreModel.fromJson(json);
+  //       }).toList();
 
-        return listofGenres;
-      } else {
-        throw Exception("Error code: ${response.statusCode}");
-      }
-    } catch (e) {
-      print(e);
-    }
-    return null;
-  }
+  //       return listofGenres;
+  //     } else {
+  //       throw Exception("Error code: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   return null;
+  // }
 }

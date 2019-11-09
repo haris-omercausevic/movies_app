@@ -31,6 +31,7 @@ void main() {
       final StorageRepository storageRepository =
           StorageRepository(sharedPreferences: sharedPreferences);
 
+      await storageRepository.setString(Keys.jwt, AppSettings.apiKeyBearer);
       final ApiClient apiClient =
           initializeApiClient(storageRepository.getString(Keys.jwt));
 

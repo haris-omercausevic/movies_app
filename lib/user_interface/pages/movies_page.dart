@@ -7,6 +7,7 @@ import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class MoviesPage extends StatefulWidget {
   static const routeName = "/MoviesPage";
