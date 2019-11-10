@@ -69,7 +69,7 @@ class _MoviesPageState extends State<MoviesPage> {
     return OrientationBuilder(
       builder: (BuildContext context, Orientation orientation) {
         return GridView.builder(
-          itemCount: movies.page < movies.totalpages
+          itemCount: movies.page < movies.total_pages
               ? movies.results.length + 1
               : movies.results.length,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -83,7 +83,7 @@ class _MoviesPageState extends State<MoviesPage> {
                     child: FlatButton(
                       child: Text("Load More"),
                       onPressed: () {
-                        widget.moviesBloc.add(LoadMoreMovies());
+                        widget.moviesBloc.add(LoadMoreMovies(movies: widget.moviesBloc.state.movies));
                         //TODO: zavrsiti implementaciju
                       },
                     ),

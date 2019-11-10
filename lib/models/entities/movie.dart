@@ -2,14 +2,14 @@ import 'movie_item.dart';
 
 class MovieModel {
   int page;
-  int totalresults;
-  int totalpages;
+  int total_results;
+  int total_pages;
   List<MovieItem> results = [];
 
   MovieModel.fromJson(Map<String, dynamic> parsedJson) {
     page = parsedJson['page'];
-    totalresults = parsedJson['totalresults'];
-    totalpages = parsedJson['totalpages'];
+    total_results = parsedJson['total_results'];
+    total_pages = parsedJson['total_pages'];
     List<MovieItem> temp = [];
     for (int i = 0; i < parsedJson['results'].length; i++) {
       MovieItem result = MovieItem(parsedJson['results'][i]);
@@ -20,8 +20,8 @@ class MovieModel {
 
   MovieModel({
     this.page,
-    this.totalpages,
+    this.total_pages,
     this.results,
-    this.totalresults,
+    this.total_results,
   });
 }

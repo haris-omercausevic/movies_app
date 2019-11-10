@@ -4,8 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_app/blocs/genres/genres_bloc.dart';
 import 'package:movies_app/blocs/movies/all.dart';
+import 'package:movies_app/blocs/search/all.dart';
+import 'package:movies_app/blocs/users/users_bloc.dart';
 import 'package:movies_app/repositories/genres_repository.dart';
 import 'package:movies_app/repositories/movies_repository.dart';
+import 'package:movies_app/repositories/users_repository.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -50,6 +53,12 @@ void main() {
                 storageRepository: storageRepository,
               ),
             ),
+             RepositoryProvider<UsersRepository>(
+              builder: (context) => UsersRepository(
+                apiClient: apiClient,
+                storageRepository: storageRepository,
+              ),
+            ),
           ],
           child: MultiBlocProvider(
             providers: [
@@ -63,6 +72,18 @@ void main() {
                 builder: (context) => GenresBloc(
                   genresRepository:
                       RepositoryProvider.of<GenresRepository>(context),
+                ),
+              ),
+               BlocProvider<SearchBloc>(
+                builder: (context) => SearchBloc(
+                  moviesRepository:
+                      RepositoryProvider.of<MoviesRepository>(context),
+                ),
+              ),
+              BlocProvider<UsersBloc>(
+                builder: (context) => UsersBloc(
+                  usersRepository:
+                      RepositoryProvider.of<UsersRepository>(context),
                 ),
               ),
             ],

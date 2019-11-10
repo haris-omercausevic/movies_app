@@ -35,5 +35,6 @@ const TranslationModel translationBosnian = TranslationModel(
     outbox: 'Poslane',
  
     loadPopularMovies: "Prikaži popularne filmove",
-    loadComedyMovies: "Prikaži komedija filmove"
+    loadComedyMovies: "Prikaži komedija filmove",
+    popular: "Popularno",
 );

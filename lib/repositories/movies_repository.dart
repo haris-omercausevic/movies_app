@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:movies_app/config/keys.dart';
 import 'package:movies_app/models/entities/genre.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:meta/meta.dart';
 import 'package:movies_app/models/entities/movie_details.dart';
+import 'package:movies_app/models/entities/movie_item.dart';
 
 import 'package:movies_app/repositories/all.dart';
 import 'package:movies_app/utilities/api_client.dart';
@@ -72,7 +74,8 @@ class MoviesRepository extends BaseRepository {
     return null;
   }
 
-  Future<MovieModel> getMoviesSearch({String searchString = ""}) async {
+  Future<MovieModel> getMoviesSearch({String query = ""}) async {
+    //TODO: NOT IMPLEMENTED !
     return null;
   }
 
@@ -92,6 +95,18 @@ class MoviesRepository extends BaseRepository {
       print(e);
     }
     return null;
+  }
+
+   List<MovieItem> getSearchHistory() {
+    var searchHistory = storageRepository.getString(Keys.searchHistoryListKey);
+    var parsedJson = searchHistory != null ? json.decode(searchHistory) : null;
+
+    List<MovieItem> history = [];
+    for (int i = 0; i < parsedJson.length; i++) {
+      MovieItem result = MovieItem(parsedJson[i], isUrl: true);
+      history.add(result);
+    }
+    return history;
   }
 
   // Future<List<GenreModel>> getGenresList() async {

@@ -4,7 +4,6 @@ import 'package:movies_app/models/entities/movie.dart';
 
 abstract class SearchState {
   final MovieModel movies;
-
   SearchState({@required this.movies});
 }
 
@@ -19,3 +18,9 @@ class LoadedSearch extends SearchState {
       : assert(movies != null),
         super(movies: movies);
 }
+
+// class LoadedHistory extends SearchState {
+//    LoadedHistory({@required List<MovieItem> movies})
+//       : assert(movies != null),
+//         super(movies: MovieModel(results: movies));
+// }

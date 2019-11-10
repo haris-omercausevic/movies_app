@@ -5,4 +5,6 @@ class Keys {
 
   static const String countryCode = 'country_code';
   static const String languageCode = 'language_code';
+
+  static const String searchHistoryListKey = 'searchHistoryListKey';
 }

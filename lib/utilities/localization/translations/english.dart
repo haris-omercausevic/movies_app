@@ -35,5 +35,6 @@ const TranslationModel translationEnglish = TranslationModel(
   outbox: 'Outbox',
 
   loadComedyMovies: "Show comedy movies",
-  loadPopularMovies: "Show popular movies"
+  loadPopularMovies: "Show popular movies",
+  popular: "Popular",
 );

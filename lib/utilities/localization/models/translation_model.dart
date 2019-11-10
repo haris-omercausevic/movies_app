@@ -36,6 +36,7 @@ class TranslationModel {
 
   final String loadPopularMovies;
   final String loadComedyMovies;
+  final String popular;
 
   const TranslationModel({
     @required this.home,
@@ -73,6 +74,7 @@ class TranslationModel {
 
     @required this.loadPopularMovies,
     @required this.loadComedyMovies,
+    @required this.popular,
   })  : assert(home != null),
         assert(username != null),
         assert(password != null),
@@ -107,5 +109,6 @@ class TranslationModel {
         assert(outbox != null),
         
         assert(loadPopularMovies != null),
-        assert(loadComedyMovies != null);
+        assert(loadComedyMovies != null),
+        assert(popular != null);
 }
