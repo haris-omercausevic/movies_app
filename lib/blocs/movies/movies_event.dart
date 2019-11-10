@@ -9,12 +9,13 @@ class LoadMoviesByGenre extends MoviesEvent {
   LoadMoviesByGenre({@required this.genreId}) : assert(genreId != null);
 }
 
+class LoadMoreMovies extends MoviesEvent {}
+
 class LoadTopRatingMovies extends MoviesEvent {}
 
 class LoadUpcomingMovies extends MoviesEvent {}
 
-
-class LoadMainPage extends MoviesEvent{}
+class LoadMainPage extends MoviesEvent {}
 
 class SaveToWishlist extends MoviesEvent {
   final int movieId;

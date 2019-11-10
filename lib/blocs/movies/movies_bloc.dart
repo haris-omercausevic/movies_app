@@ -26,6 +26,10 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       yield* _loadMovies();
     }
 
+      if(event is LoadMoreMovies){ // popular, trending
+      yield* _loadMovies();
+    }
+
   if(event is LoadMoviesByGenre){ // genre
       yield* _loadMovies(genreId: event.genreId);
       //yield* _loadMoviesByGenre(event.genreId);
@@ -50,6 +54,12 @@ Stream<MoviesState> _loadMainPage() async* {
   }
 
   Stream<MoviesState> _loadMovies({int genreId = 0}) async* {
+    yield Loading();
+    var movies = await moviesRepository.getMovies(genreId: genreId);
+    yield movies != null? LoadedMovies(movies: movies): Error();
+  }
+
+  Stream<MoviesState> _loadMoreMovies({int genreId = 0}) async* {
     yield Loading();
     var movies = await moviesRepository.getMovies(genreId: genreId);
     yield movies != null? LoadedMovies(movies: movies): Error();

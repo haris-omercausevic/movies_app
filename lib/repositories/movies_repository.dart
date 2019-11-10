@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:movies_app/models/entities/genre.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:meta/meta.dart';
+import 'package:movies_app/models/entities/movie_details.dart';
 
 import 'package:movies_app/repositories/all.dart';
 import 'package:movies_app/utilities/api_client.dart';
@@ -20,6 +21,9 @@ class MoviesRepository extends BaseRepository {
 
   String RouteMoviePopular = "/3/movie/popular";
   String RouteDiscoverMovie = "/3/discover/movie";
+  String RouteSearchMovie = "/3/discover/movie";
+  String RouteMovieDetails = "/3/movie"; // /{id}
+  //TODO: Ucitati videee https://api.themoviedb.org/3/movie/157336?api_key={api_key}&append_to_response=videos
 
   MoviesRepository({
     @required ApiClient apiClient,
@@ -27,17 +31,18 @@ class MoviesRepository extends BaseRepository {
   })  : assert(storageRepository != null),
         super(apiClient: apiClient);
 
-  Future<MovieModel> getMovies({int genreId = 0}) async {
+  Future<MovieModel> getMovies({int genreId = 0, int page = 1}) async {
     try {
       int comedyId = 35; // hardcoded for now
 
       final response = genreId == 0
           ? await super.apiClient.get(
-              RouteMoviePopular
+              RouteMoviePopular,
+              queryParameters: {"page": page},
             )
           : await super.apiClient.get(
               RouteDiscoverMovie,
-              queryParameters: {"with_genres": comedyId},
+              queryParameters: {"with_genres": comedyId, "page": page},
             );
 
       if (response.statusCode == HttpStatus.ok) {
@@ -48,6 +53,26 @@ class MoviesRepository extends BaseRepository {
     } catch (e) {
       print(e);
     }
+    return null;
+  }
+
+  Future<MovieDetailsModel> getMovieDetails({@required int movieId}) async {
+    try {
+      final response =
+          await super.apiClient.get(RouteMovieDetails + "/$movieId");
+
+      if (response.statusCode == HttpStatus.ok) {
+        return MovieDetailsModel.fromJson(response.data);
+      } else {
+        throw Exception("Error code: ${response.statusCode}");
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
+  Future<MovieModel> getMoviesSearch({String searchString = ""}) async {
     return null;
   }
 
