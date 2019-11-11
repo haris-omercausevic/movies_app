@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
     if (index == 0) {
       _moviesBloc.add(LoadMovies());
     } else if (index == 1) {
-      _moviesBloc.add(LoadMovies(page: 2));
+      _moviesBloc.add(LoadMovies(movies: _moviesBloc.state.movies)); // load page 2 
     } else if (index == 2) {
       _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
       //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);

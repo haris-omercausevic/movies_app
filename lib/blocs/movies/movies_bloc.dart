@@ -9,6 +9,7 @@ import 'package:movies_app/repositories/movies_repository.dart';
 
 class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
   final MoviesRepository moviesRepository;
+  MoviesEvent lastEvent;
 
   MoviesBloc({@required this.moviesRepository})
       : assert(moviesRepository != null);
@@ -22,7 +23,8 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       yield LoadedMainPage();
     }
     if (event is LoadMovies) {
-      yield* _loadMovies(); // popular
+      yield* _loadMovies(
+          genreId: event.genreId, moviesList: event.movies); // popular
     }
 
     if (event is LoadMoviesByGenre) {
@@ -30,32 +32,51 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       //yield* _loadMoviesByGenre(event.genreId);
     }
 
+//prepravljeno da se ne koristi vec da ide sve u LoadMovies radi ucitavanja novih page-ova iste kategorije
     if (event is LoadMoreMovies) {
-      yield* _loadMoreMovies(moviesList: event.movies);
+      yield* _loadMovies(moviesList: event.movies);
     }
   }
 
-  Stream<MoviesState> _loadMovies({int genreId = 0}) async* {
+  Stream<MoviesState> _loadMovies(
+      {int page = 1, int genreId = 0, MovieModel moviesList = null}) async* {
     yield Loading();
-    var movies = await moviesRepository.getMovies(genreId: genreId);
-    yield movies != null ? LoadedMovies(movies: movies) : Error();
+
+//if event is LoadMore(page=2...)
+    if (moviesList != null) {
+      // var movies = _loadMoreMovies(moviesList: moviesList, genreId: genreId);
+      //   yield movies != null ? LoadedMovies(movies: movies) : Error();
+
+      bool moviesAppend =
+          moviesList.page < moviesList.total_pages ? true : false;
+      var movies = await moviesRepository.getMovies(
+          page: moviesList.page + 1, genreId: genreId);
+      if (moviesAppend != false) {
+        moviesList.page = movies.page;
+        moviesList.total_pages = movies.total_pages;
+        moviesList.total_results = movies.total_results;
+        moviesList.results += movies.results;
+      }
+      yield movies != null ? LoadedMovies(movies: moviesList, genreId: genreId) : Error();
+    }
+     else {
+      var movies = await moviesRepository.getMovies(genreId: genreId);
+      yield movies != null ? LoadedMovies(movies: movies, genreId: genreId) : Error();
+    }
   }
 
-  Stream<MoviesState> _loadMoreMovies(
-      {@required MovieModel moviesList, int genreId = 0}) async* {
-    yield Loading();
-    var moviesAppend = moviesList.page < moviesList.total_pages
-        ? await moviesRepository.getMovies(
-            page: moviesList.page + 1, genreId: genreId)
-        : null;
-
-    if (moviesAppend != null) {
-      moviesList.page = moviesAppend.page;
-      moviesList.total_pages = moviesAppend.total_pages;
-      moviesList.total_results = moviesAppend.total_results;
-      moviesList.results += moviesAppend.results;
+  Future<MovieModel> _loadMoreMovies(
+      {@required MovieModel moviesList, int genreId = 0}) async {
+    bool moviesAppend = moviesList.page < moviesList.total_pages ? true : false;
+    var movies = await moviesRepository.getMovies(
+        page: moviesList.page + 1, genreId: genreId);
+    if (moviesAppend != false) {
+      moviesList.page = movies.page;
+      moviesList.total_pages = movies.total_pages;
+      moviesList.total_results = movies.total_results;
+      moviesList.results += movies.results;
     }
-    yield LoadedMovies(movies: moviesList);
+    return moviesList;
   }
 
   // Stream<MoviesState> _loadMovieByid({@required int movieId}) async* {

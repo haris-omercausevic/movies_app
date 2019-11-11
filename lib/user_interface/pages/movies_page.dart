@@ -7,7 +7,6 @@ import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 
 class MoviesPage extends StatefulWidget {
   static const routeName = "/MoviesPage";
@@ -25,10 +24,27 @@ class _MoviesPageState extends State<MoviesPage> {
   AppThemeData _appTheme;
   NavigatorState _navigator;
   MediaQueryData _mediaQuery;
-
+  ScrollController _scrollController;
   @override
   void initState() {
+    _scrollController = ScrollController();
+    _scrollController.addListener(_scrollListener);
     super.initState();
+  }
+
+  String message;
+  _scrollListener() {
+    if (_scrollController.offset >=
+            _scrollController.position.maxScrollExtent &&
+        !_scrollController.position.outOfRange) {
+
+      widget.moviesBloc.add(LoadMovies(movies: widget.moviesBloc.state.movies, genreId: widget.moviesBloc.state.genreId));
+      setState(() {
+        _scrollController.animateTo(_scrollController.position.maxScrollExtent, curve: Curves.linear, duration: Duration(milliseconds: 500));
+        message = "reach the bottom";
+        print("reach the bottom");        
+      });
+    }    
   }
 
   @override
@@ -43,11 +59,11 @@ class _MoviesPageState extends State<MoviesPage> {
 
   @override
   Widget build(BuildContext context) {
-    final double statusBarHeight = _mediaQuery.padding.top / 2;
-    final screenHeightPercent = (_mediaQuery.size.height -
-            _mediaQuery.padding.top -
-            kBottomNavigationBarHeight) /
-        100;
+    // final double statusBarHeight = _mediaQuery.padding.top / 2;
+    // final screenHeightPercent = (_mediaQuery.size.height -
+    //         _mediaQuery.padding.top -
+    //         kBottomNavigationBarHeight) /
+    //     100;
 
     return Container(
       child: BlocBuilder<MoviesBloc, MoviesState>(
@@ -66,12 +82,15 @@ class _MoviesPageState extends State<MoviesPage> {
   }
 
   Widget buildColumnWithData(MovieModel movies) {
+    var before = 0.0;
+    //_scrollController.jumpTo(before);
     return OrientationBuilder(
       builder: (BuildContext context, Orientation orientation) {
         return GridView.builder(
           itemCount: movies.page < movies.total_pages
               ? movies.results.length + 1
               : movies.results.length,
+          controller: _scrollController,
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
             //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
@@ -83,9 +102,13 @@ class _MoviesPageState extends State<MoviesPage> {
                     child: FlatButton(
                       child: Text("Load More"),
                       onPressed: () {
-                        widget.moviesBloc.add(LoadMoreMovies(
-                            movies: widget.moviesBloc.state.movies));
-                        //TODO: zavrsiti implementaciju
+                        //TODO: Provjeriti je li dobar pristup..
+                        before = _scrollController.position.maxScrollExtent;
+                        widget.moviesBloc.add(LoadMovies(
+                            movies: movies,
+                            genreId: widget.moviesBloc.state.genreId));
+                        // widget.moviesBloc.add(LoadMoreMovies(
+                        //     movies: widget.moviesBloc.state.movies));
                       },
                     ),
                   )
