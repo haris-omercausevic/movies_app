@@ -19,6 +19,8 @@ class LoadedSearch extends SearchState {
         super(movies: movies);
 }
 
+class HistorySet extends SearchState {}
+
 // class LoadedHistory extends SearchState {
 //    LoadedHistory({@required List<MovieItem> movies})
 //       : assert(movies != null),

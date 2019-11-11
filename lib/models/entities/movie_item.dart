@@ -1,88 +1,62 @@
 import 'package:movies_app/config/app_settings.dart';
 
 class MovieItem {
-  int _vote_count;
-  int _id;
-  bool _video;
-  double _vote_average;
-  String _title;
-  double _popularity;
-  String _poster_path;
-  String _original_language;
-  String _original_title;
-  List<int> _genre_ids = [];
-  String _backdrop_path;
-  bool _adult;
-  String _overview;
-  String _release_date;
+  int vote_count;
+  int id;
+  bool video;
+  double vote_average;
+  String title;
+  double popularity;
+  String poster_path;
+  String original_language;
+  String original_title;
+  List<int> genre_ids = [];
+  String backdrop_path;
+  bool adult;
+  String overview;
+  String release_date;
 
   final imagePath = AppSettings.imageUrlW185;
 
-  MovieItem(result, {bool isUrl = false}) {
-    _vote_count = result['vote_count'];
-    _id = result['id'];
-    _video = result['video'];
-    _vote_average = result['vote_average'].toDouble();
-    _title = result['title'];
-    _popularity = result['popularity'];
+   MovieItem.fromJson(Map<String, dynamic> parsedJson, {bool isUrl = false}) {
+    vote_count = parsedJson['vote_count'] as int;
+    id = parsedJson['id'];
+    video = parsedJson['video'];
+    vote_average = parsedJson['vote_average'] + 0.0;
+    title = parsedJson['title'];
+    popularity = parsedJson['popularity'] + 0.0;
     if (isUrl == true) {
-      _poster_path =
-          result['poster_path'];
+      poster_path =
+          parsedJson['poster_path'];
     } else {
-      _poster_path = imagePath + result['poster_path'];
+      poster_path = "$imagePath${parsedJson['poster_path']}";
     }
-    _original_language = result['original_language'];
-    _original_title = result['original_title'];
-    for (int i = 0; i < result['genre_ids'].length; i++) {
-      _genre_ids.add(result['genre_ids'][i]);
+    original_language = parsedJson['original_language'];
+    original_title = parsedJson['original_title'];
+    for (int i = 0; i < parsedJson['genre_ids'].length; i++) {
+      genre_ids.add(parsedJson['genre_ids'][i]);
     }
-    _backdrop_path = result['backdrop_path'];
-    _adult = result['adult'];
-    _overview = result['overview'];
-    _release_date = result['release_date'];
+    backdrop_path = parsedJson['backdrop_path'];
+    adult = parsedJson['adult'];
+    overview = parsedJson['overview'];
+    release_date = parsedJson['release_date'];
   }
 
   Map<String, dynamic> toJson() => {
-        'vote_count': _vote_count,
-        'id': _id,
-        'video': _video,
-        'vote_average': _vote_average,
-        'title': _title,
-        'popularity': _popularity,
-        'poster_path': _poster_path,
-        'original_language': _original_language,
-        'original_title': _original_title,
-        'genre_ids': _genre_ids,
-        'backdrop_path': _backdrop_path,
-        'adult': _adult,
-        'overview': _overview,
-        'release_date': _release_date,
+        'vote_count': vote_count,
+        'id': id,
+        'video': video,
+        'vote_average': vote_average,
+        'title': title,
+        'popularity': popularity,
+        'poster_path': poster_path,
+        'original_language': original_language,
+        'original_title': original_title,
+        'genre_ids': genre_ids,
+        'backdrop_path': backdrop_path,
+        'adult': adult,
+        'overview': overview,
+        'release_date': release_date,
       };
-  String get release_date => _release_date;
-
-  String get overview => _overview;
-
-  bool get adult => _adult;
-
-  String get backdrop_path => _backdrop_path;
-
-  List<int> get genre_ids => _genre_ids;
-
-  String get original_title => _original_title;
-
-  String get original_language => _original_language;
-
-  String get poster_path => _poster_path;
-
-  double get popularity => _popularity;
-
-  String get title => _title;
-
-  double get vote_average => _vote_average;
-
-  bool get video => _video;
-
-  int get id => _id;
-
-  int get vote_count => _vote_count;
+  
 }

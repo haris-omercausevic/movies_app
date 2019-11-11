@@ -127,7 +127,6 @@ class _HomePageState extends State<HomePage> {
           icon: Icon(Icons.search),
           onPressed: () {
             showSearch(context: context, delegate: _searchDelegate);
-            print("Pressed search");
           },
         ),
         IconButton(

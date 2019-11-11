@@ -23,7 +23,7 @@ class MoviesRepository extends BaseRepository {
 
   String RouteMoviePopular = "/3/movie/popular";
   String RouteDiscoverMovie = "/3/discover/movie";
-  String RouteSearchMovie = "/3/discover/movie";
+  String RouteSearchMovie = "/3/search/movie";
   String RouteMovieDetails = "/3/movie"; // /{id}
   //TODO: Ucitati videee https://api.themoviedb.org/3/movie/157336?api_key={api_key}&append_to_response=videos
 
@@ -74,41 +74,66 @@ class MoviesRepository extends BaseRepository {
     return null;
   }
 
-  Future<MovieModel> getMoviesSearch({String query = ""}) async {
-    //TODO: NOT IMPLEMENTED !
-    return null;
-  }
-
-  Future<GenreModel> getGenres() async {
-    //ne koristi se jos
+  Future<MovieModel> getMoviesSearch({String query, int page = 1}) async {
     try {
-      String uri = "/3/genre/movie/list";
-
-      final response =
-          await super.apiClient.get(uri, queryParameters: {"api_key": _apiKey});
+      final response = await super.apiClient.get(
+        RouteSearchMovie,
+        queryParameters: {"query": query, "page": page},
+      );
+      MovieModel podaci;
       if (response.statusCode == HttpStatus.ok) {
-        return GenreModel.fromJson(response.data);
+        podaci = MovieModel.fromJson(response.data);
+        return podaci;
       } else {
-        throw Exception("Error code: ${response.statusCode}");
+        throw Exception(
+            "Error code: ${response.statusCode}, MESSAGE: ${response.statusMessage}");
       }
-    } catch (e) {
-      print(e);
+    }on Exception catch (e) {
+      print("HARIS EXC:" + e.toString() + e.runtimeType.toString());
+      
     }
     return null;
   }
 
-   List<MovieItem> getSearchHistory() {
+  List<MovieItem> getSearchHistory() {
     var searchHistory = storageRepository.getString(Keys.searchHistoryListKey);
     var parsedJson = searchHistory != null ? json.decode(searchHistory) : null;
 
     List<MovieItem> history = [];
-    for (int i = 0; i < parsedJson.length; i++) {
-      MovieItem result = MovieItem(parsedJson[i], isUrl: true);
-      history.add(result);
+    if (parsedJson != null) {
+      for (int i = 0; i < parsedJson.length; i++) {
+        MovieItem result = MovieItem.fromJson(parsedJson[i], isUrl: true);
+        history.add(result);
+      }
     }
+
     return history;
   }
 
+  Future<bool> setSearchHistory(List<MovieItem> history) async {
+    return history == null
+        ? false
+        : storageRepository.setString(
+            Keys.searchHistoryListKey, json.encode(history));
+  }
+
+  // Future<GenreModel> getGenres() async {
+  //   //ne koristi se jos
+  //   try {
+  //     String uri = "/3/genre/movie/list";
+
+  //     final response =
+  //         await super.apiClient.get(uri, queryParameters: {"api_key": _apiKey});
+  //     if (response.statusCode == HttpStatus.ok) {
+  //       return GenreModel.fromJson(response.data);
+  //     } else {
+  //       throw Exception("Error code: ${response.statusCode}");
+  //     }
+  //   } catch (e) {
+  //     print(e);
+  //   }
+  //   return null;
+  // }
   // Future<List<GenreModel>> getGenresList() async {
   //   //ne koristi se jos
   //   try {

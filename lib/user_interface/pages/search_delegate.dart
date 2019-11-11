@@ -23,6 +23,7 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
     //Load history from storage repository
     //ILI
     //_history = searchBloc.moviesRepository.getSearchHistory();
+    _history = searchBloc.moviesRepository.getSearchHistory();
   }
 
   @override
@@ -155,18 +156,11 @@ class _WordSuggestionList extends StatelessWidget {
             ),
           ),
           // Highlight the substring that matched the query.
-          title: RichText(
-            text: TextSpan(
-              text: suggestion.title.substring(0, query.length),
-              style: textTheme.copyWith(fontWeight: FontWeight.bold),
-              children: <TextSpan>[
-                TextSpan(
-                  text: suggestion.title.substring(query.length),
+          title: 
+                Text(
+                  suggestion.title,
                   style: textTheme,
                 ),
-              ],
-            ),
-          ),
           subtitle:
               //Text(suggestion == null? "": DateTime.parse(suggestion.release_date).year.toString()),
               Text(DateTime.parse(suggestion.release_date).year.toString()),

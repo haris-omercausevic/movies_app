@@ -5,7 +5,6 @@ import 'package:bloc/bloc.dart';
 import 'package:movies_app/blocs/search/search_event.dart';
 import 'package:movies_app/blocs/search/search_state.dart';
 import 'package:movies_app/models/all.dart';
-import 'package:movies_app/models/entities/movie_item.dart';
 import 'package:movies_app/repositories/all.dart';
 
 class SearchBloc extends Bloc<SearchEvent, SearchState> {
@@ -28,7 +27,7 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
     }
 
     if (event is SetHistory) {
-      _setHistory(event.history);
+      await moviesRepository.setSearchHistory(event.history);
     }
   }
 
@@ -37,14 +36,12 @@ class SearchBloc extends Bloc<SearchEvent, SearchState> {
 
     if (query.isEmpty || query == null) {
       var history = await moviesRepository.getSearchHistory();
-      yield LoadedSearch(movies: MovieModel(results: history));
+      yield history != null
+          ? LoadedSearch(movies: MovieModel(results: history, page: 1))
+          : Error();
     } else {
       var movies = await moviesRepository.getMoviesSearch(query: query);
-      yield LoadedSearch(movies: movies);
+      yield movies != null ? LoadedSearch(movies: movies) : Error();
     }
-  }
-
-  void _setHistory(List<MovieItem> history) {
-    
   }
 }
