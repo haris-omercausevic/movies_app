@@ -15,7 +15,7 @@ class LoadMoviesByGenre extends MoviesEvent {
 }
 
 class LoadMoreMovies extends MoviesEvent {
-   final MovieModel movies;
+   final MovieModel movies;      
   LoadMoreMovies({@required this.movies});
 }
 

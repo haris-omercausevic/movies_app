@@ -15,7 +15,9 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
   List<MovieItem> _history = [];
 
   //initialize delegate with full word list and history words
-  SearchAppBarDelegate({@required this.searchBloc}) : assert(searchBloc != null), super()
+  SearchAppBarDelegate({@required this.searchBloc})
+      : assert(searchBloc != null),
+        super()
   // : _history =  json.decode(moviesBloc.moviesRepository.storageRepository
   //       .getString(_searchHistoryListKey)) as List<MovieItem>,
   //DONE: load from storageRepository -> sharedPrefs..
@@ -94,7 +96,7 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-      searchBloc.add(LoadSearch(query: query));
+    searchBloc.add(LoadSearch(query: query));
     //calling wordsuggestion list
     return Container(
       child: BlocBuilder<SearchBloc, SearchState>(
@@ -156,14 +158,13 @@ class _WordSuggestionList extends StatelessWidget {
             ),
           ),
           // Highlight the substring that matched the query.
-          title: 
-                Text(
-                  suggestion.title,
-                  style: textTheme,
-                ),
+          title: Text(
+            suggestion.title,
+            style: textTheme,
+          ),
           subtitle:
               //Text(suggestion == null? "": DateTime.parse(suggestion.release_date).year.toString()),
-              Text(DateTime.parse(suggestion.release_date).year.toString()),
+              Text(tryParse(suggestion.release_date)),                
           onTap: () {
             onSelected(suggestion);
           },
@@ -171,4 +172,15 @@ class _WordSuggestionList extends StatelessWidget {
       },
     );
   }
+}
+
+String tryParse(String date){
+  if(date == null) return "";
+  try{
+    return DateTime.parse(date).year.toString();
+  }
+  on FormatException catch (e){
+    print(e.message);    
+  }
+return "";
 }

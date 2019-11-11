@@ -5,6 +5,12 @@ class GenreModel {
   GenreModel.fromJson(Map<String, dynamic> json) {
     GenreModel(genres: json.values.toList());
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'genres': genres,
+    };
+  }
 }
 
 class GenreItemModel {
@@ -12,11 +18,18 @@ class GenreItemModel {
   String name;
 
   GenreItemModel({this.id, this.name});
-  
+
   GenreItemModel.fromJson(Map<String, dynamic> json) {
     GenreItemModel(
       id: json['id'],
       name: json['name'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+    };
   }
 }

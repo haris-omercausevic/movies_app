@@ -58,7 +58,7 @@ class MoviesRepository extends BaseRepository {
     return null;
   }
 
-  Future<MovieDetailsModel> getMovieDetails({@required int movieId}) async {
+  Future<MovieDetailsModel> getMovieById({@required int movieId}) async {
     try {
       final response =
           await super.apiClient.get(RouteMovieDetails + "/$movieId");
@@ -111,9 +111,7 @@ class MoviesRepository extends BaseRepository {
   }
 
   Future<bool> setSearchHistory(List<MovieItem> history) async {
-    return history == null
-        ? false
-        : storageRepository.setString(
+    return storageRepository.setString(
             Keys.searchHistoryListKey, json.encode(history));
   }
 

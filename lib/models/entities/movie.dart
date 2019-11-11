@@ -25,3 +25,5 @@ class MovieModel {
     this.total_results,
   });
 }
+
+

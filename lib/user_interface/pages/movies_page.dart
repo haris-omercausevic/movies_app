@@ -83,7 +83,8 @@ class _MoviesPageState extends State<MoviesPage> {
                     child: FlatButton(
                       child: Text("Load More"),
                       onPressed: () {
-                        widget.moviesBloc.add(LoadMoreMovies(movies: widget.moviesBloc.state.movies));
+                        widget.moviesBloc.add(LoadMoreMovies(
+                            movies: widget.moviesBloc.state.movies));
                         //TODO: zavrsiti implementaciju
                       },
                     ),
@@ -181,8 +182,8 @@ class _MoviesPageState extends State<MoviesPage> {
                   ),
                 ),
                 Text(
-                  DateFormat("dd.MM.yyyy").format(
-                      DateTime.parse(movies.results[index].release_date)),
+                  DateFormat("dd.MM.yyyy")
+                      .format(tryParse(movies.results[index].release_date)),
                 ),
               ],
             ),
@@ -191,4 +192,14 @@ class _MoviesPageState extends State<MoviesPage> {
       ),
     );
   }
+}
+
+DateTime tryParse(String date) {
+  if (date == null) return null;
+  try {
+    return DateTime.parse(date);
+  } on FormatException catch (e) {
+    print(e.message);
+  }
+  return null;
 }

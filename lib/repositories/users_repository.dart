@@ -52,13 +52,6 @@ class UsersRepository extends BaseRepository {
     return null;
   }
 
-  UserModel getCurrentUser() {
-    var currentUserString = storageRepository.getString(Keys.currentUser);
-    return currentUserString != null
-        ? UserModel.fromJson(json.decode(currentUserString))
-        : null;
-  }
-
   Future<UserModel> authenticationSimulator() async {
     try {
       final responseRequestToken =
@@ -87,6 +80,13 @@ class UsersRepository extends BaseRepository {
       print(e);
     }
     return null;
+  }
+
+  UserModel getCurrentUser() {
+    var currentUserString = storageRepository.getString(Keys.currentUser);
+    return currentUserString != null
+        ? UserModel.fromJson(json.decode(currentUserString))
+        : null;
   }
 
   Future<bool> setCurrentUser(UserModel user) async {
