@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/user_interface/common/all.dart';
+import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/user_interface/pages/users_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
@@ -159,7 +160,7 @@ Container setPosition(){
                     movies.results[index].poster_path,
                     fit: BoxFit.cover,
                   ),
-                  onTap: () => _navigator.pushNamed(UsersDetailsPage.routeName,
+                  onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
                       arguments: movies.results[index]),
                 ),
               ),
