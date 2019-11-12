@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/blocs/search/all.dart';
+import 'package:movies_app/blocs/users/users_bloc.dart';
+import 'package:movies_app/blocs/users/users_event.dart';
 import 'package:movies_app/config/app_settings.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/user_interface/pages/search_delegate.dart';
+import 'package:movies_app/user_interface/pages/users_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
 import 'package:speech_recognition/speech_recognition.dart';
@@ -26,6 +29,7 @@ class _HomePageState extends State<HomePage> {
 
   MoviesBloc _moviesBloc;
   SearchBloc _searchBloc;
+  UsersBloc _usersBloc;
   SearchAppBarDelegate _searchDelegate;
   SpeechRecognition _speech = SpeechRecognition();
 
@@ -36,7 +40,8 @@ class _HomePageState extends State<HomePage> {
     if (index == 0) {
       _moviesBloc.add(LoadMovies());
     } else if (index == 1) {
-      _moviesBloc.add(LoadMovies(movies: _moviesBloc.state.movies)); // load page 2 
+      _moviesBloc
+          .add(LoadMovies(movies: _moviesBloc.state.movies)); // load page 2
     } else if (index == 2) {
       _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
       //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
@@ -50,6 +55,7 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     _moviesBloc = BlocProvider.of<MoviesBloc>(context);
     _searchBloc = BlocProvider.of<SearchBloc>(context);
+    _usersBloc = BlocProvider.of<UsersBloc>(context);
     _searchDelegate = SearchAppBarDelegate(searchBloc: _searchBloc);
 
     // _children = [
@@ -81,11 +87,11 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final double statusBarHeight = _mediaQuery.padding.top / 2;
-    final screenHeightPercent = (_mediaQuery.size.height -
-            _mediaQuery.padding.top -
-            kBottomNavigationBarHeight) /
-        100;
+    // final double statusBarHeight = _mediaQuery.padding.top / 2;
+    // final screenHeightPercent = (_mediaQuery.size.height -
+    //         _mediaQuery.padding.top -
+    //         kBottomNavigationBarHeight) /
+    //     100;
 
     return Scaffold(
       appBar: homeAppBar(),
@@ -93,7 +99,7 @@ class _HomePageState extends State<HomePage> {
         resizeDuration: null,
         child: MoviesPage(
           moviesBloc: _moviesBloc,
-        ), 
+        ),
         key: ValueKey(selectedIndex),
         onDismissed: (DismissDirection direction) {
           if (direction == DismissDirection.endToStart && selectedIndex < 2) {
@@ -134,7 +140,10 @@ class _HomePageState extends State<HomePage> {
           onPressed: () => print("Pressed favorites"),
         ),
         IconButton(
-          onPressed: () => print("Pressed profile!"),
+          onPressed: () {
+            _usersBloc.add(LoadUser());
+            _navigator.pushNamed(UsersDetailsPage.routeName, arguments: _usersBloc);
+          },
           icon: Icon(Icons.person),
         ),
       ],

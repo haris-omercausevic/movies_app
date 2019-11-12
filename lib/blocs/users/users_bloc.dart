@@ -17,15 +17,20 @@ class UsersBloc extends Bloc<UsersEvent, UsersState> {
 
   @override
   Stream<UsersState> mapEventToState(UsersEvent event) async* {
-    // DONE: implement mapEventToState
+    // DONE: implement mapEventToState    
     if (event is LoadUser) {
       yield* _loadUser();
     }
+
+    if(event is LoadUserMoviesByList){
+      //not yet implemented
+    }
   }
 
+//samo nesto zasad za prikazat..
   Stream<UsersState> _loadUser() async* {
     yield Loading();
-    var user = await usersRepository.getCurrentUser();
+    var user = await usersRepository.getUserLists();
     yield LoadedUser(user: user);
   }
 }

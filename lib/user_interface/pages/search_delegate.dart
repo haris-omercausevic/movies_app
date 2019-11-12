@@ -1,9 +1,7 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:movies_app/blocs/search/all.dart';
-import 'package:movies_app/config/keys.dart';
+
 import 'package:movies_app/models/entities/movie_item.dart';
 import 'package:movies_app/user_interface/common/error_page.dart';
 import 'package:movies_app/user_interface/common/loader.dart';

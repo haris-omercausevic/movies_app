@@ -6,6 +6,7 @@ import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/movies_details_page.dart';
 import 'package:movies_app/user_interface/pages/movies_page.dart';
+import 'package:movies_app/user_interface/pages/users_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
 
@@ -56,7 +57,9 @@ class Application extends StatelessWidget {
       case MoviesPage.routeName:
         return MaterialPageRoute(builder: (_) => MoviesPage(moviesBloc: settings.arguments), settings: settings);
       case MoviesDetailsPage.routeName:
-        return MaterialPageRoute(builder: (_) => MoviesDetailsPage(movieItem: settings.arguments,), settings: settings);
+        return MaterialPageRoute(builder: (_) => MoviesDetailsPage(movieItem: settings.arguments), settings: settings);
+      case UsersDetailsPage.routeName:
+        return MaterialPageRoute(builder: (_) => UsersDetailsPage(usersBloc:settings.arguments), settings: settings);
     }
 
     return null;

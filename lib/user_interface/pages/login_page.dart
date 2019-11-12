@@ -1,15 +1,13 @@
 //page za login auth i webview
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-
 import 'package:movies_app/blocs/authentication/authentication_bloc.dart';
 import 'package:movies_app/blocs/authentication/authentication_event.dart';
 import 'package:movies_app/blocs/authentication/authentication_state.dart';
 import 'package:movies_app/models/requests/authentication_login_body.dart';
-import 'package:movies_app/user_interface/common/app_theme.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
+//NE KORISTI SE
 class LoginPage extends StatefulWidget {
   LoginPage({Key key}) : super(key: key);
 
@@ -32,8 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     super.didChangeDependencies();
   }
 
-  //TODO: Ovde ce trebat webview samo vjerovatno i jos ponesto sitno
-
+  
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

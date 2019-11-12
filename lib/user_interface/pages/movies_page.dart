@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -5,7 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:movies_app/user_interface/common/all.dart';
-import 'package:movies_app/user_interface/pages/movies_details_page.dart';
+import 'package:movies_app/user_interface/pages/users_page.dart';
 import 'package:movies_app/utilities/localization/localizer.dart';
 
 class MoviesPage extends StatefulWidget {
@@ -32,19 +34,25 @@ class _MoviesPageState extends State<MoviesPage> {
     super.initState();
   }
 
+  bool goToEnd = false;
+  double position;
+
   String message;
   _scrollListener() {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
         !_scrollController.position.outOfRange) {
+//load more when at end
 
-      widget.moviesBloc.add(LoadMovies(movies: widget.moviesBloc.state.movies, genreId: widget.moviesBloc.state.genreId));
-      setState(() {
-        _scrollController.animateTo(_scrollController.position.maxScrollExtent, curve: Curves.linear, duration: Duration(milliseconds: 500));
-        message = "reach the bottom";
-        print("reach the bottom");        
+widget.moviesBloc.add(LoadMovies(
+            movies: widget.moviesBloc.state.movies,
+            genreId: widget.moviesBloc.state.genreId));
+        goToEnd = true;
+
+      setState(() {        
+        print("reach the bottom");
       });
-    }    
+    }
   }
 
   @override
@@ -72,7 +80,7 @@ class _MoviesPageState extends State<MoviesPage> {
             if (state is Loading) {
               return Loader();
             } else if (state is LoadedMovies) {
-              return Container(child: buildColumnWithData(state.movies));
+              return Container(child: buildColumnWithData(state.movies), );
             } else if (state is Initial) {
               widget.moviesBloc.add(LoadMovies());
             }
@@ -81,9 +89,11 @@ class _MoviesPageState extends State<MoviesPage> {
     );
   }
 
-  Widget buildColumnWithData(MovieModel movies) {
-    var before = 0.0;
-    //_scrollController.jumpTo(before);
+  Widget buildColumnWithData(MovieModel movies) {    
+    if(goToEnd){
+       Timer(Duration(milliseconds: 800), () => _scrollController.animateTo(position, curve: Curves.linear, duration: Duration(milliseconds: 600)));
+       goToEnd = false;
+    }
     return OrientationBuilder(
       builder: (BuildContext context, Orientation orientation) {
         return GridView.builder(
@@ -97,21 +107,22 @@ class _MoviesPageState extends State<MoviesPage> {
           ),
           itemBuilder: (BuildContext context, int index) {
             return (index == movies.results.length)
-                ? Container(
-                    color: Colors.greenAccent,
-                    child: FlatButton(
-                      child: Text("Load More"),
-                      onPressed: () {
-                        //TODO: Provjeriti je li dobar pristup..
-                        before = _scrollController.position.maxScrollExtent;
-                        widget.moviesBloc.add(LoadMovies(
-                            movies: movies,
-                            genreId: widget.moviesBloc.state.genreId));
-                        // widget.moviesBloc.add(LoadMoreMovies(
-                        //     movies: widget.moviesBloc.state.movies));
-                      },
-                    ),
-                  )
+                ? setPosition()
+                //PREPRAVLJENO da radi automatski kada se dodje do dna..
+                // Container(
+                //     color: Colors.greenAccent,
+                //     child: FlatButton(
+                //       child: Text("Load More"),
+                //       onPressed: () {
+                //         //TODO: Provjeriti je li dobar pristup..
+                //         widget.moviesBloc.add(LoadMovies(
+                //             movies: movies,
+                //             genreId: widget.moviesBloc.state.genreId));
+                //         // widget.moviesBloc.add(LoadMoreMovies(
+                //         //     movies: widget.moviesBloc.state.movies));
+                //       },
+                //     ),
+                //   )
                 : buildMovieCard(movies, index);
           },
         );
@@ -119,7 +130,11 @@ class _MoviesPageState extends State<MoviesPage> {
     );
   }
 
-  Container buildMovieCard(MovieModel movies, int index) {
+Container setPosition(){
+  position = _scrollController.position.maxScrollExtent - 300.0;
+  return Container();
+}
+  Container buildMovieCard(MovieModel movies, int index) {    
     return Container(
       margin: EdgeInsets.all(2.0),
       child: Card(
@@ -144,7 +159,7 @@ class _MoviesPageState extends State<MoviesPage> {
                     movies.results[index].poster_path,
                     fit: BoxFit.cover,
                   ),
-                  onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
+                  onTap: () => _navigator.pushNamed(UsersDetailsPage.routeName,
                       arguments: movies.results[index]),
                 ),
               ),

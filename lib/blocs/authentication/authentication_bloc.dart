@@ -4,6 +4,7 @@ import 'package:movies_app/blocs/authentication/authentication_state.dart';
 import 'package:movies_app/repositories/users_repository.dart';
 import 'package:bloc/bloc.dart';
 
+//NE KORISTI se jos
 class AuthenticationBloc
     extends Bloc<AuthenticationEvent, AuthenticationState> {
   final UsersRepository usersRepository;

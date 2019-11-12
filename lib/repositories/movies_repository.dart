@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:movies_app/config/keys.dart';
-import 'package:movies_app/models/entities/genre.dart';
 import 'package:movies_app/models/entities/movie.dart';
 import 'package:meta/meta.dart';
 import 'package:movies_app/models/entities/movie_details.dart';
@@ -13,19 +12,18 @@ import 'package:movies_app/utilities/api_client.dart';
 
 class MoviesRepository extends BaseRepository {
   final StorageRepository storageRepository;
-  final _apiKey = "802b2c4b88ea1183e50e6b285a27696e";
-  final _apiKeyBearer =
-      "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZDE2ZTBkY2MxYjlkMDhkYTJlZThlY2E5YTc0ZTEyMyIsInN1YiI6IjVkYmVjZTcyZWZlMzdjMDAxODgzMjU2OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rI5-34HOrqT66qObs1M5hqtA-UVtYsWzaRF08YngJiU";
+  // final _apiKey = "802b2c4b88ea1183e50e6b285a27696e";
+  // final _apiKeyBearer =
+  //     "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2ZDE2ZTBkY2MxYjlkMDhkYTJlZThlY2E5YTc0ZTEyMyIsInN1YiI6IjVkYmVjZTcyZWZlMzdjMDAxODgzMjU2OCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rI5-34HOrqT66qObs1M5hqtA-UVtYsWzaRF08YngJiU";
 
-  final accountId = "5dbece72efe37c0018832568";
-  final accessToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NzI3OTQzMjgsInN1YiI6IjVkYmVjZTcyZWZlMzdjMDAxODgzMjU2OCIsImp0aSI6IjE2NDUxMzYiLCJhdWQiOiI2ZDE2ZTBkY2MxYjlkMDhkYTJlZThlY2E5YTc0ZTEyMyIsInNjb3BlcyI6WyJhcGlfcmVhZCIsImFwaV93cml0ZSJdLCJ2ZXJzaW9uIjoxfQ.lBw3FNKCVvVZ3DPPJfU6ljOa0sgtHtAm3Lg_FLj8UV4";
+  // final accountId = "5dbece72efe37c0018832568";
+  // final accessToken =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NzI3OTQzMjgsInN1YiI6IjVkYmVjZTcyZWZlMzdjMDAxODgzMjU2OCIsImp0aSI6IjE2NDUxMzYiLCJhdWQiOiI2ZDE2ZTBkY2MxYjlkMDhkYTJlZThlY2E5YTc0ZTEyMyIsInNjb3BlcyI6WyJhcGlfcmVhZCIsImFwaV93cml0ZSJdLCJ2ZXJzaW9uIjoxfQ.lBw3FNKCVvVZ3DPPJfU6ljOa0sgtHtAm3Lg_FLj8UV4";
 
   String RouteMoviePopular = "/3/movie/popular";
   String RouteDiscoverMovie = "/3/discover/movie";
   String RouteSearchMovie = "/3/search/movie";
-  String RouteMovieDetails = "/3/movie"; // /{id}
-  //TODO: Ucitati videee https://api.themoviedb.org/3/movie/157336?api_key={api_key}&append_to_response=videos
+  String RouteMovieDetails = "/3/movie"; // /{id}  
 
   MoviesRepository({
     @required ApiClient apiClient,

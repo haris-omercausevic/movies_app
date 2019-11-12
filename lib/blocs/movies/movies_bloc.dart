@@ -43,10 +43,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
     yield Loading();
 
 //if event is LoadMore(page=2...)
-    if (moviesList != null) {
-      // var movies = _loadMoreMovies(moviesList: moviesList, genreId: genreId);
-      //   yield movies != null ? LoadedMovies(movies: movies) : Error();
-
+    if (moviesList != null) {      
       bool moviesAppend =
           moviesList.page < moviesList.total_pages ? true : false;
       var movies = await moviesRepository.getMovies(
@@ -58,26 +55,26 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
         moviesList.results += movies.results;
       }
       yield movies != null ? LoadedMovies(movies: moviesList, genreId: genreId) : Error();
-    }
+    }    
      else {
       var movies = await moviesRepository.getMovies(genreId: genreId);
       yield movies != null ? LoadedMovies(movies: movies, genreId: genreId) : Error();
     }
   }
 
-  Future<MovieModel> _loadMoreMovies(
-      {@required MovieModel moviesList, int genreId = 0}) async {
-    bool moviesAppend = moviesList.page < moviesList.total_pages ? true : false;
-    var movies = await moviesRepository.getMovies(
-        page: moviesList.page + 1, genreId: genreId);
-    if (moviesAppend != false) {
-      moviesList.page = movies.page;
-      moviesList.total_pages = movies.total_pages;
-      moviesList.total_results = movies.total_results;
-      moviesList.results += movies.results;
-    }
-    return moviesList;
-  }
+  // Future<MovieModel> _loadMoreMovies(
+  //     {@required MovieModel moviesList, int genreId = 0}) async {
+  //   bool moviesAppend = moviesList.page < moviesList.total_pages ? true : false;
+  //   var movies = await moviesRepository.getMovies(
+  //       page: moviesList.page + 1, genreId: genreId);
+  //   if (moviesAppend != false) {
+  //     moviesList.page = movies.page;
+  //     moviesList.total_pages = movies.total_pages;
+  //     moviesList.total_results = movies.total_results;
+  //     moviesList.results += movies.results;
+  //   }
+  //   return moviesList;
+  // }
 
   // Stream<MoviesState> _loadMovieByid({@required int movieId}) async* {
   //   yield Loading();

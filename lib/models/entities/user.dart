@@ -3,18 +3,20 @@ class UserModel {
   int id;
   int featured;
   String description;
-  double revenue;
+  String revenue;
+  int public;
   String account_object_id;
   String name;
   String updated_at;
   String created_at;
-  String sort_by;
+  int sort_by;
   String backdrop_path;
   int runtime;
   double average_rating;
   String iso_3166_1;
-  bool adult;
+  int adult;
   int number_of_items;
+  String poster_path;
 
   UserModel({
     this.iso_639_1,
@@ -22,6 +24,7 @@ class UserModel {
     this.featured,
     this.description,
     this.revenue,
+    this.public,
     this.account_object_id,
     this.name,
     this.updated_at,
@@ -33,6 +36,7 @@ class UserModel {
     this.iso_3166_1,
     this.adult,
     this.number_of_items,
+    this.poster_path,
   });
 
 //pripaziti da se proslijedi json.results[0], a ne citav json objekat sa page, total_pages
@@ -42,6 +46,7 @@ class UserModel {
     featured = parsedJson['featured'];
     description = parsedJson['description'];
     revenue = parsedJson['revenue'];
+    public = parsedJson['public'];
     account_object_id = parsedJson['account_object_id'];
     name = parsedJson['name'];
     updated_at = parsedJson['updated_at'];
@@ -49,10 +54,11 @@ class UserModel {
     sort_by = parsedJson['sort_by'];
     backdrop_path = parsedJson['backdrop_path'];
     runtime = parsedJson['runtime'];
-    average_rating = parsedJson['average_rating'];
+    average_rating = parsedJson['average_rating'].toDouble();
     iso_3166_1 = parsedJson['iso_3166_1'];
     adult = parsedJson['adult'];
     number_of_items = parsedJson['number_of_items'];
+    poster_path = parsedJson['poster_path'];
   }
 
   Map<String, dynamic> toJson(){

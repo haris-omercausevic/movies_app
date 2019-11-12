@@ -14,4 +14,5 @@ class LoadUserMoviesFavorite extends UsersEvent {}
 class LoadUserMoviesWatchlist extends UsersEvent {}
 
 class LoadUserTvFavorite extends UsersEvent {}
+
 class LoadUserTvWatchlist extends UsersEvent {}
