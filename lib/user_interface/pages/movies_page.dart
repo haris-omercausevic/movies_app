@@ -103,7 +103,7 @@ class _MoviesPageState extends State<MoviesPage> {
     // }
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
-        if ((scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent-200) && !scrollInfo.metrics.outOfRange) {
+        if ((scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) && !scrollInfo.metrics.outOfRange) {
         if(movies.results.length <= movies.page*20){
               widget.moviesBloc.add(LoadMovies(
                 movies: widget.moviesBloc.state.movies,
