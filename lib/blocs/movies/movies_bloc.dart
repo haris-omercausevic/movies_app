@@ -40,8 +40,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
 
   Stream<MoviesState> _loadMovies(
       {int page = 1, int genreId = 0, MovieModel moviesList = null}) async* {
-    yield Loading();
-
+    
 //if event is LoadMore(page=2...)
     if (moviesList != null) {      
       bool moviesAppend =
@@ -57,6 +56,7 @@ class MoviesBloc extends Bloc<MoviesEvent, MoviesState> {
       yield movies != null ? LoadedMovies(movies: moviesList, genreId: genreId) : Error();
     }    
      else {
+      yield Loading();
       var movies = await moviesRepository.getMovies(genreId: genreId);
       yield movies != null ? LoadedMovies(movies: movies, genreId: genreId) : Error();
     }

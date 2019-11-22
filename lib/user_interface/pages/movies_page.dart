@@ -28,32 +28,34 @@ class _MoviesPageState extends State<MoviesPage> {
   AppThemeData _appTheme;
   NavigatorState _navigator;
   MediaQueryData _mediaQuery;
-  ScrollController _scrollController;
+  //ScrollController _scrollController;
   @override
   void initState() {
-    _scrollController = ScrollController();
-    _scrollController.addListener(_scrollListener);
+    // _scrollController = ScrollController();
+    // _scrollController.addListener(_scrollListener);
     super.initState();
   }
+
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      new GlobalKey<RefreshIndicatorState>();
 
   bool goToEnd = false;
   double position;
 
   String message;
 
-  _scrollListener() {
-    if (_scrollController.offset >=
-            _scrollController.position.maxScrollExtent &&
-        !_scrollController.position.outOfRange) {
-//load more when at end
+//   _scrollListener() {
+//     if (_scrollController.offset >=
+//             _scrollController.position.maxScrollExtent &&
+//         !_scrollController.position.outOfRange) {
+// //load more when at end
 
-widget.moviesBloc.add(LoadMovies(
-            movies: widget.moviesBloc.state.movies,
-            genreId: widget.moviesBloc.state.genreId));
-        goToEnd = true;
-      
-    }
-  }
+//       widget.moviesBloc.add(LoadMovies(
+//           movies: widget.moviesBloc.state.movies,
+//           genreId: widget.moviesBloc.state.genreId));
+//       goToEnd = true;
+//     }
+//  }
 
   @override
   void didChangeDependencies() {
@@ -80,7 +82,9 @@ widget.moviesBloc.add(LoadMovies(
             if (state is Loading) {
               return Loader();
             } else if (state is LoadedMovies) {
-              return Container(child: buildColumnWithData(state.movies), );
+              return Container(
+                child: buildColumnWithData(state.movies),
+              );
             } else if (state is Initial) {
               widget.moviesBloc.add(LoadMovies());
             }
@@ -89,54 +93,73 @@ widget.moviesBloc.add(LoadMovies(
     );
   }
 
-  Widget buildColumnWithData(MovieModel movies) {    
-    if(goToEnd){
-       Timer(Duration(milliseconds: 800), () => _scrollController.animateTo(position, curve: Curves.linear, duration: Duration(milliseconds: 600)));
-       goToEnd = false;
-    }
-    return OrientationBuilder(
-      builder: (BuildContext context, Orientation orientation) {
-        return GridView.builder(
-          itemCount: movies.page < movies.total_pages
-              ? movies.results.length + 1
-              : movies.results.length,
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
-            //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
-          ),
-          itemBuilder: (BuildContext context, int index) {
-            return (index == movies.results.length)
-                ? setPosition()
-                //PREPRAVLJENO da radi automatski kada se dodje do dna..
-                // Container(
-                //     color: Colors.greenAccent,
-                //     child: FlatButton(
-                //       child: Text("Load More"),
-                //       onPressed: () {
-                //         //TODO: Provjeriti je li dobar pristup..
-                //         widget.moviesBloc.add(LoadMovies(
-                //             movies: movies,
-                //             genreId: widget.moviesBloc.state.genreId));
-                //         // widget.moviesBloc.add(LoadMoreMovies(
-                //         //     movies: widget.moviesBloc.state.movies));
-                //       },
-                //     ),
-                //   )
-                : buildMovieCard(movies.results[index]);
-          },
-        );
-      },
+  Widget buildColumnWithData(MovieModel movies) {
+    // if (goToEnd) {
+    //   Timer(
+    //       Duration(milliseconds: 800),
+    //       () => _scrollController.animateTo(position,
+    //           curve: Curves.linear, duration: Duration(milliseconds: 600)));
+    //   goToEnd = false;
+    // }
+    return NotificationListener<ScrollNotification>(
+      onNotification: (ScrollNotification scrollInfo) {
+        if ((scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent-200) && !scrollInfo.metrics.outOfRange) {
+        if(movies.results.length <= movies.page*20){
+              widget.moviesBloc.add(LoadMovies(
+                movies: widget.moviesBloc.state.movies,
+                genreId: widget.moviesBloc.state.genreId));
+            }
+        }
+            
+          },  
+      child: OrientationBuilder(
+        builder: (BuildContext context, Orientation orientation) {
+          return GridView.builder(
+            itemCount: movies.results.length+1,
+            //controller: _scrollController,
+            physics: AlwaysScrollableScrollPhysics(),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
+              //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
+            ),
+            itemBuilder: (BuildContext context, int index) {
+              return (index == movies.results.length)
+                  ? Container(
+                      height: 100.0,
+                      color: Colors.white70,
+                      child: Center(
+                        child: CircularProgressIndicator(),
+                      ),
+                    )
+                  //     //PREPRAVLJENO da radi automatski kada se dodje do dna..
+                  //     // Container(
+                  //     //     color: Colors.greenAccent,
+                  //     //     child: FlatButton(
+                  //     //       child: Text("Load More"),
+                  //     //       onPressed: () {
+                  //     //         //TODO: Provjeriti je li dobar pristup..
+                  //     //         widget.moviesBloc.add(LoadMovies(
+                  //     //             movies: movies,
+                  //     //             genreId: widget.moviesBloc.state.genreId));
+                  //     //         // widget.moviesBloc.add(LoadMoreMovies(
+                  //     //         //     movies: widget.moviesBloc.state.movies));
+                  //     //       },
+                  //     //     ),
+                  //     //   )
+                  : buildMovieCard(movies.results[index]);
+            },
+          );
+        },
+      ),
     );
   }
 
-Container setPosition(){
-  position = _scrollController.position.maxScrollExtent - 300.0;
-  return Container();
-}
+  // Container setPosition() {
+  //   position = _scrollController.position.maxScrollExtent - 300.0;
+  //   return Container();
+  // }
 
-  Container buildMovieCard(MovieItem movie) {    
+  Container buildMovieCard(MovieItem movie) {
     return Container(
       margin: EdgeInsets.all(2.0),
       child: Card(
@@ -222,8 +245,7 @@ Container setPosition(){
                   ),
                 ),
                 Text(
-                  DateFormat("dd.MM.yyyy")
-                      .format(tryParse(movie.release_date)),
+                  DateFormat("dd.MM.yyyy").format(tryParse(movie.release_date)),
                 ),
               ],
             ),
