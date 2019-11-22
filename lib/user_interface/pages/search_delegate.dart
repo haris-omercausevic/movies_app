@@ -5,12 +5,15 @@ import 'package:movies_app/blocs/search/all.dart';
 import 'package:movies_app/models/entities/movie_item.dart';
 import 'package:movies_app/user_interface/common/error_page.dart';
 import 'package:movies_app/user_interface/common/loader.dart';
+import 'package:movies_app/user_interface/pages/all.dart';
+import 'package:movies_app/user_interface/pages/users_page.dart';
 
 class SearchAppBarDelegate extends SearchDelegate<String> {
   //list holds history search words.
   //final MoviesBloc moviesBloc;
   final SearchBloc searchBloc;
   List<MovieItem> _history = [];
+  MovieItem selected;
 
   //initialize delegate with full word list and history words
   SearchAppBarDelegate({@required this.searchBloc})
@@ -65,31 +68,33 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
 
   @override
   Widget buildResults(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            Text('===Your Word Choice==='),
-            GestureDetector(
-              onTap: () {
-                //Define your action when clicking on result item.
-                //In this example, it simply closes the page
-                this.close(context, this.query);
-              },
-              child: Text(
-                this.query,
-                style: Theme.of(context)
-                    .textTheme
-                    .display2
-                    .copyWith(fontWeight: FontWeight.normal),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+    return Center(child: MoviesDetailsPage(movieItem: selected));
+    // return Padding(
+    //   padding: const EdgeInsets.all(8.0),
+    //   child: Center(
+    //     child: Column(
+    //       mainAxisSize: MainAxisSize.min,
+    //       children: <Widget>[
+    //         Text('===Your Word Choice==='),
+    //         GestureDetector(
+    //           onTap: () {
+    //             //Define your action when clicking on result item.
+    //             //In this example, it simply closes the page
+    //             this.close(context, this.query);
+    //           },
+
+    //           child: Text(
+    //             this.query,
+    //             style: Theme.of(context)
+    //                 .textTheme
+    //                 .display2
+    //                 .copyWith(fontWeight: FontWeight.normal),
+    //           ),
+    //         ),
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   @override
@@ -107,6 +112,7 @@ class SearchAppBarDelegate extends SearchDelegate<String> {
                   query: this.query,
                   suggestions: state.movies.results,
                   onSelected: (MovieItem suggestion) {
+                    selected = suggestion;
                     this.query = suggestion.title;
 
                     //_history remove existing item and add it back on top
@@ -162,7 +168,7 @@ class _WordSuggestionList extends StatelessWidget {
           ),
           subtitle:
               //Text(suggestion == null? "": DateTime.parse(suggestion.release_date).year.toString()),
-              Text(tryParse(suggestion.release_date)),                
+              Text(tryParse(suggestion.release_date)),
           onTap: () {
             onSelected(suggestion);
           },
@@ -172,13 +178,12 @@ class _WordSuggestionList extends StatelessWidget {
   }
 }
 
-String tryParse(String date){
-  if(date == null) return "";
-  try{
+String tryParse(String date) {
+  if (date == null) return "";
+  try {
     return DateTime.parse(date).year.toString();
+  } on FormatException catch (e) {
+    print(e.message);
   }
-  on FormatException catch (e){
-    print(e.message);    
-  }
-return "";
+  return "";
 }

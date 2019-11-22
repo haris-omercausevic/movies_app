@@ -55,6 +55,8 @@ class UsersRepository extends BaseRepository {
     return null;
   }
 
+  
+
   UserModel getCurrentUser() {
     var currentUserString = storageRepository.getString(Keys.currentUser);
     return currentUserString != null

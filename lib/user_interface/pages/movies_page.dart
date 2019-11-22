@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 
 import 'package:movies_app/blocs/movies/all.dart';
 import 'package:movies_app/models/entities/movie.dart';
+import 'package:movies_app/models/entities/movie_item.dart';
 import 'package:movies_app/user_interface/common/all.dart';
 import 'package:movies_app/user_interface/pages/all.dart';
 import 'package:movies_app/user_interface/pages/users_page.dart';
@@ -39,6 +40,7 @@ class _MoviesPageState extends State<MoviesPage> {
   double position;
 
   String message;
+
   _scrollListener() {
     if (_scrollController.offset >=
             _scrollController.position.maxScrollExtent &&
@@ -49,10 +51,7 @@ widget.moviesBloc.add(LoadMovies(
             movies: widget.moviesBloc.state.movies,
             genreId: widget.moviesBloc.state.genreId));
         goToEnd = true;
-
-      setState(() {        
-        print("reach the bottom");
-      });
+      
     }
   }
 
@@ -102,6 +101,7 @@ widget.moviesBloc.add(LoadMovies(
               ? movies.results.length + 1
               : movies.results.length,
           controller: _scrollController,
+          physics: const AlwaysScrollableScrollPhysics(),
           gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
             //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
@@ -124,7 +124,7 @@ widget.moviesBloc.add(LoadMovies(
                 //       },
                 //     ),
                 //   )
-                : buildMovieCard(movies, index);
+                : buildMovieCard(movies.results[index]);
           },
         );
       },
@@ -135,7 +135,8 @@ Container setPosition(){
   position = _scrollController.position.maxScrollExtent - 300.0;
   return Container();
 }
-  Container buildMovieCard(MovieModel movies, int index) {    
+
+  Container buildMovieCard(MovieItem movie) {    
     return Container(
       margin: EdgeInsets.all(2.0),
       child: Card(
@@ -157,11 +158,11 @@ Container setPosition(){
                 child: InkResponse(
                   enableFeedback: true,
                   child: Image.network(
-                    movies.results[index].poster_path,
+                    movie.poster_path,
                     fit: BoxFit.cover,
                   ),
                   onTap: () => _navigator.pushNamed(MoviesDetailsPage.routeName,
-                      arguments: movies.results[index]),
+                      arguments: movie),
                 ),
               ),
             ),
@@ -171,7 +172,7 @@ Container setPosition(){
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    movies.results[index].title,
+                    movie.title,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                         color: Colors.black, fontWeight: FontWeight.w600),
@@ -191,7 +192,7 @@ Container setPosition(){
                     color: Colors.yellow,
                   ),
                   Text(
-                    movies.results[index].vote_average.toString(),
+                    movie.vote_average.toString(),
                   ),
                   Spacer(),
                   Padding(
@@ -203,7 +204,7 @@ Container setPosition(){
                     ),
                   ),
                   Text(
-                    movies.results[index].vote_count.toString(),
+                    movie.vote_count.toString(),
                   ),
                 ],
               ),
@@ -222,7 +223,7 @@ Container setPosition(){
                 ),
                 Text(
                   DateFormat("dd.MM.yyyy")
-                      .format(tryParse(movies.results[index].release_date)),
+                      .format(tryParse(movie.release_date)),
                 ),
               ],
             ),

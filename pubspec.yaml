@@ -3,7 +3,7 @@ version: 1.0.0+1
 description: A social network mobile application for sharing the atmosphere and experiences from clubs, cafes and other catering facilities
 
 environment:
-  sdk: ">=2.1.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
