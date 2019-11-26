@@ -28,11 +28,11 @@ class _MoviesPageState extends State<MoviesPage> {
   AppThemeData _appTheme;
   NavigatorState _navigator;
   MediaQueryData _mediaQuery;
-  //ScrollController _scrollController;
+  ScrollController _scrollController;
   @override
   void initState() {
-    // _scrollController = ScrollController();
-    // _scrollController.addListener(_scrollListener);
+     _scrollController = ScrollController();
+     //_scrollController.addListener(_scrollListener);
     super.initState();
   }
 
@@ -103,21 +103,28 @@ class _MoviesPageState extends State<MoviesPage> {
     // }
     return NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification scrollInfo) {
-        if ((scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) && !scrollInfo.metrics.outOfRange) {
-        if(movies.results.length <= movies.page*20){
-              widget.moviesBloc.add(LoadMovies(
+        // if ((scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) &&
+        //     !scrollInfo.metrics.outOfRange) {
+        //     widget.moviesBloc.add(LoadMovies(
+        //         movies: widget.moviesBloc.state.movies,
+        //         genreId: widget.moviesBloc.state.genreId));
+          
+        // }
+        if(scrollInfo is ScrollEndNotification){
+          if(_scrollController.position.extentAfter == 0){
+             widget.moviesBloc.add(LoadMovies(
                 movies: widget.moviesBloc.state.movies,
                 genreId: widget.moviesBloc.state.genreId));
-            }
+          }
         }
-            
-          },  
+      },
       child: OrientationBuilder(
         builder: (BuildContext context, Orientation orientation) {
           return GridView.builder(
-            itemCount: movies.results.length+1,
+            itemCount: movies.results.length + 1,
             //controller: _scrollController,
             physics: AlwaysScrollableScrollPhysics(),
+            controller: _scrollController,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: orientation == Orientation.portrait ? 2 : 3,
               //childAspectRatio: _mediaQuery.size.width / (_mediaQuery.size.height / 2), //height of GridView items
