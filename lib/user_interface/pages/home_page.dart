@@ -34,23 +34,9 @@ class _HomePageState extends State<HomePage> {
   SpeechRecognition _speech = SpeechRecognition();
 
   int selectedIndex = 0;
-  List<Widget> _children;
+  //List<Widget> _children;
 
-  void _onTabTapped(int index) {
-    if (index == 0) {
-      _moviesBloc.add(LoadMovies());
-    } else if (index == 1) {
-      _moviesBloc
-          .add(LoadMovies(movies: _moviesBloc.state.movies)); // load page 2
-    } else if (index == 2) {
-      _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
-      //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
-    }
-    setState(() {
-      selectedIndex = index;
-    });
-  }
-
+  
   @override
   void initState() {
     _moviesBloc = BlocProvider.of<MoviesBloc>(context);
@@ -80,9 +66,25 @@ class _HomePageState extends State<HomePage> {
     _navigator = Navigator.of(context);
     _mediaQuery = MediaQuery.of(context);
     _moviesBloc = BlocProvider.of<MoviesBloc>(context);
-    _searchBloc = BlocProvider.of<SearchBloc>(context);
-    //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
+    _searchBloc = BlocProvider.of<SearchBloc>(context);    
     super.didChangeDependencies();
+  }
+
+
+//Prepraviti da se ne poziva uvijek metoda, api itd, vec samo kada refreshuje, a do tad da se ucitava iz storageRepo ili tako nesto
+  void _onTabTapped(int index) {
+    if (index == 0) {
+      _moviesBloc.add(LoadMovies());
+    } else if (index == 1) {
+      _moviesBloc
+          .add(LoadMovies(movies: _moviesBloc.state.movies)); // load page 2
+    } else if (index == 2) {
+      _moviesBloc.add(LoadMoviesByGenre(genreId: 35));
+      //_searchDelegate = _SearchAppBarDelegate(_moviesBloc.state.movies.results);
+    }
+    setState(() {
+      selectedIndex = index;
+    });
   }
 
   @override
@@ -103,11 +105,11 @@ class _HomePageState extends State<HomePage> {
         key: ValueKey(selectedIndex),
         onDismissed: (DismissDirection direction) {
           if (direction == DismissDirection.endToStart && selectedIndex < 2) {
-            selectedIndex += 1;
+            selectedIndex++;
             _onTabTapped(selectedIndex);
           } else if (direction == DismissDirection.startToEnd &&
               selectedIndex > 0) {
-            selectedIndex -= 1;
+            selectedIndex--;
             _onTabTapped(selectedIndex);
           }
         },
