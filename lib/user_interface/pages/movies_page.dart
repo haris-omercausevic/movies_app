@@ -31,8 +31,8 @@ class _MoviesPageState extends State<MoviesPage> {
   ScrollController _scrollController;
   @override
   void initState() {
-     _scrollController = ScrollController();
-     //_scrollController.addListener(_scrollListener);
+    _scrollController = ScrollController();
+    //_scrollController.addListener(_scrollListener);
     super.initState();
   }
 
@@ -108,11 +108,11 @@ class _MoviesPageState extends State<MoviesPage> {
         //     widget.moviesBloc.add(LoadMovies(
         //         movies: widget.moviesBloc.state.movies,
         //         genreId: widget.moviesBloc.state.genreId));
-          
+
         // }
-        if(scrollInfo is ScrollEndNotification){
-          if(_scrollController.position.extentAfter == 0){
-             widget.moviesBloc.add(LoadMovies(
+        if (scrollInfo is ScrollEndNotification) {
+          if (_scrollController.position.extentAfter == 0) {
+            widget.moviesBloc.add(LoadMovies(
                 movies: widget.moviesBloc.state.movies,
                 genreId: widget.moviesBloc.state.genreId));
           }
@@ -133,8 +133,10 @@ class _MoviesPageState extends State<MoviesPage> {
               return (index == movies.results.length)
                   ? Container(
                       height: 100.0,
-                      color: Colors.white70,
-                      child: Center(
+                      color: Colors.white70,                      
+                      width: _mediaQuery.size.width,
+                      child: Container(                        
+                        alignment: Alignment.centerRight,
                         child: CircularProgressIndicator(),
                       ),
                     )
